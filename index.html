@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XenomorphSk // multiverse_log.sh</title>
+<meta name="description" content="Gabriel Skura Ribeiro — pesquisador independente em segurança ofensiva, física quântica e biologia computacional.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void: #07090a;
+  --panel: #0e1411;
+  --portal-1: #6dffb8;
+  --portal-2: #1fb6c9;
+  --acid: #d4ff3d;
+  --alert: #ff3b5c;
+  --ink: #cfe8da;
+  --ink-dim: #7c948a;
+  --line: #1d2b25;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --pmono: 'IBM Plex Mono', monospace;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--sans);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{ background:var(--portal-1); color:#06120c; }
+
+a{ color:inherit; text-decoration:none; }
+
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:var(--void);}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:0;}
+
+/* ---------- noise / scanline atmosphere ---------- */
+.scanlines{
+  position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(
+    to bottom, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px,
+    transparent 1px, transparent 3px
+  );
+  mix-blend-mode:overlay;
+  opacity:.5;
+}
+.vignette{
+  position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ---------- boot screen ---------- */
+#boot{
+  position:fixed; inset:0; background:var(--void); color:var(--portal-1);
+  font-family:var(--mono); z-index:10000;
+  display:flex; align-items:flex-start; justify-content:flex-start;
+  padding:8vh 6vw; font-size:13px; line-height:1.7;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#boot.hidden{ opacity:0; visibility:hidden; }
+#boot pre{ white-space:pre-wrap; }
+#boot .cursor{ display:inline-block; width:8px; height:14px; background:var(--portal-1); animation:blink 1s steps(1) infinite; vertical-align:-2px;}
+@keyframes blink{ 50%{opacity:0;} }
+#boot .skip{
+  position:absolute; bottom:6vh; right:6vw; font-size:11px; color:var(--ink-dim);
+  border:1px solid var(--line); padding:8px 14px; cursor:pointer; font-family:var(--mono);
+  letter-spacing:.05em;
+}
+#boot .skip:hover{ color:var(--portal-1); border-color:var(--portal-1); }
+
+/* ---------- nav ---------- */
+header{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 6vw;
+  font-family:var(--mono);
+  font-size:12.5px;
+  letter-spacing:.06em;
+  background:linear-gradient(to bottom, rgba(7,9,10,.92), rgba(7,9,10,0));
+  backdrop-filter:blur(2px);
+}
+.brand{ display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:700; }
+.brand .ring{
+  width:14px; height:14px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--portal-1), var(--portal-2), var(--acid), var(--portal-1));
+  animation:spin 4s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+nav{ display:flex; gap:28px; }
+nav a{ color:var(--ink-dim); position:relative; padding:4px 0; transition:color .2s; }
+nav a:hover{ color:var(--portal-1); }
+nav a::after{
+  content:''; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--portal-1);
+  transition:width .25s ease;
+}
+nav a:hover::after{ width:100%; }
+.nav-status{ display:none; }
+@media (min-width:720px){ .nav-status{ display:flex; gap:8px; align-items:center; color:var(--ink-dim);} }
+.dot{ width:6px; height:6px; border-radius:50%; background:var(--portal-1); box-shadow:0 0 8px var(--portal-1); animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse{ 50%{ opacity:.35; } }
+
+/* ---------- layout helpers ---------- */
+section{ position:relative; padding:140px 6vw 100px; max-width:1180px; margin:0 auto; }
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--portal-1); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+}
+.eyebrow::before{ content:''; width:22px; height:1px; background:var(--portal-1); }
+h2.title{
+  font-family:var(--mono); font-weight:800; font-size:clamp(28px,4.2vw,46px);
+  letter-spacing:-.01em; color:var(--ink); margin-bottom:14px; text-transform:uppercase;
+}
+.lede{ color:var(--ink-dim); max-width:640px; font-size:15.5px; line-height:1.75; }
+
+/* ---------- hero ---------- */
+#hero{
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+  padding-top:120px; position:relative;
+}
+.portal-wrap{
+  position:absolute; right:2vw; top:50%; transform:translateY(-50%);
+  width:min(46vw,520px); height:min(46vw,520px); z-index:0; opacity:.85;
+  pointer-events:none;
+}
+@media (max-width:880px){ .portal-wrap{ display:none; } }
+.portal{
+  width:100%; height:100%; border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--void) 0%, var(--void) 18%, transparent 19%),
+    conic-gradient(from 0deg, var(--portal-2), var(--portal-1), var(--acid), var(--portal-2), var(--portal-1));
+  filter:blur(.3px);
+  animation:spin 7s linear infinite;
+  box-shadow:0 0 90px 10px rgba(109,255,184,.18), inset 0 0 60px rgba(0,0,0,.6);
+}
+.portal::after{ content:''; }
+
+.hero-eyebrow{
+  font-family:var(--mono); font-size:12px; color:var(--ink-dim); letter-spacing:.12em;
+  margin-bottom:22px; display:block;
+}
+.hero-eyebrow .blip{ color:var(--portal-1); }
+h1{
+  font-family:var(--mono); font-weight:800; line-height:1.02;
+  font-size:clamp(38px, 7.4vw, 88px); letter-spacing:-.01em; color:var(--ink);
+  text-transform:uppercase; max-width:920px;
+}
+h1 .glitch{ position:relative; display:inline-block; color:var(--portal-1); }
+.hero-sub{
+  margin-top:26px; max-width:560px; color:var(--ink-dim); font-size:16px; line-height:1.8;
+}
+.hero-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:38px; }
+.btn{
+  font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:13px 22px; border:1px solid var(--line); color:var(--ink); transition:all .2s ease;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn.primary{ background:var(--portal-1); color:#06160f; border-color:var(--portal-1); font-weight:700; }
+.btn.primary:hover{ background:var(--acid); border-color:var(--acid); transform:translateY(-1px); }
+.btn:not(.primary):hover{ border-color:var(--portal-1); color:var(--portal-1); }
+
+.hero-tags{ display:flex; gap:10px; flex-wrap:wrap; margin-top:46px; }
+.tag{
+  font-family:var(--pmono); font-size:11px; color:var(--ink-dim); border:1px solid var(--line);
+  padding:6px 11px; letter-spacing:.03em;
+}
+
+/* ---------- about ---------- */
+.about-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:60px; margin-top:46px; }
+@media (max-width:860px){ .about-grid{ grid-template-columns:1fr; } }
+.about-text p{ color:var(--ink-dim); line-height:1.85; margin-bottom:18px; font-size:15.5px; }
+.about-text strong{ color:var(--ink); font-weight:600; }
+.dossier{
+  border:1px solid var(--line); background:var(--panel); padding:26px;
+  font-family:var(--pmono); font-size:13px;
+}
+.dossier .row{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); gap:16px; }
+.dossier .row:last-child{ border-bottom:none; }
+.dossier .k{ color:var(--ink-dim); }
+.dossier .v{ color:var(--portal-1); text-align:right; }
+.dossier-head{ font-family:var(--mono); color:var(--ink); font-size:12px; letter-spacing:.1em; margin-bottom:16px; text-transform:uppercase; display:flex; justify-content:space-between;}
+.dossier-head span:last-child{ color:var(--acid); }
+
+/* ---------- projects ---------- */
+.dim-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); margin-top:50px; border:1px solid var(--line); }
+@media (max-width:760px){ .dim-grid{ grid-template-columns:1fr; } }
+.dim-card{
+  background:var(--void); padding:34px; position:relative; overflow:hidden; cursor:pointer;
+  transition:background .25s ease;
+}
+.dim-card:hover{ background:#0b1310; }
+.dim-card .dim-id{ font-family:var(--mono); font-size:11px; color:var(--ink-dim); letter-spacing:.12em; }
+.dim-card h3{
+  font-family:var(--mono); font-size:21px; margin:14px 0 12px; color:var(--ink);
+  text-transform:uppercase; letter-spacing:-.01em;
+}
+.dim-card .status{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--pmono); font-size:10.5px;
+  color:var(--portal-1); text-transform:uppercase; letter-spacing:.05em; margin-bottom:14px;
+}
+.dim-card .status .dot{ width:5px; height:5px; }
+.dim-card p{ color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:16px; }
+.dim-card .stack{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+.dim-card .stack span{ font-family:var(--pmono); font-size:10.5px; color:var(--ink-dim); border:1px solid var(--line); padding:4px 8px; }
+.dim-card .findings{ font-family:var(--pmono); font-size:12.5px; color:var(--ink); border-left:2px solid var(--portal-1); padding-left:12px; line-height:1.8; }
+.dim-card .findings em{ color:var(--acid); font-style:normal; }
+.dim-card a.link{ display:inline-flex; align-items:center; gap:6px; margin-top:18px; font-family:var(--mono); font-size:11.5px; color:var(--portal-1); letter-spacing:.04em; }
+.dim-card a.link:hover{ color:var(--acid); }
+.dim-card::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--portal-1), var(--acid)); transform:scaleX(0); transform-origin:left;
+  transition:transform .3s ease;
+}
+.dim-card:hover::before{ transform:scaleX(1); }
+
+/* ---------- security ---------- */
+#security{ }
+.sec-banner{
+  font-family:var(--pmono); font-size:12.5px; color:var(--alert); border:1px dashed rgba(255,59,92,.4);
+  padding:14px 18px; margin-top:38px; background:rgba(255,59,92,.04); line-height:1.8;
+}
+.case-list{ margin-top:36px; display:flex; flex-direction:column; }
+.case{
+  display:grid; grid-template-columns:140px 1fr; gap:24px; padding:22px 0; border-top:1px solid var(--line);
+}
+.case:last-child{ border-bottom:1px solid var(--line); }
+@media (max-width:680px){ .case{ grid-template-columns:1fr; gap:8px; } }
+.case .sev{ font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; height:fit-content; }
+.sev.high{ color:var(--alert); }
+.sev.med{ color:var(--acid); }
+.case h4{ font-family:var(--mono); font-size:15px; color:var(--ink); margin-bottom:6px; text-transform:uppercase; }
+.case p{ color:var(--ink-dim); font-size:14px; line-height:1.7; }
+
+.tool-cloud{ display:flex; flex-wrap:wrap; gap:10px; margin-top:36px; }
+.tool-cloud span{
+  font-family:var(--pmono); font-size:12px; color:var(--ink); border:1px solid var(--line); padding:8px 14px;
+  transition:border-color .2s, color .2s;
+}
+.tool-cloud span:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+
+/* ---------- philosophy quote ---------- */
+#manifesto{ padding:120px 6vw; }
+.tx-list{ display:flex; flex-direction:column; gap:64px; max-width:880px; margin:0 auto; }
+.tx{ position:relative; padding-left:28px; border-left:1px solid var(--line); }
+.tx-id{
+  font-family:var(--mono); font-size:11px; color:var(--portal-1); letter-spacing:.16em;
+  text-transform:uppercase; margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+.tx-id::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--portal-1); box-shadow:0 0 8px var(--portal-1); }
+.tx blockquote{
+  font-family:var(--mono); font-size:clamp(19px,2.6vw,29px); color:var(--ink);
+  line-height:1.5; letter-spacing:-.01em;
+}
+.tx blockquote .hl{ color:var(--acid); }
+.tx cite{ display:block; margin-top:16px; font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); font-style:normal; }
+
+/* ---------- contact ---------- */
+#contact{ text-align:center; padding-bottom:140px; }
+#contact h2.title{ font-size:clamp(30px,5vw,56px); }
+.contact-row{ display:flex; gap:16px; justify-content:center; margin-top:34px; flex-wrap:wrap; }
+footer{
+  border-top:1px solid var(--line); padding:26px 6vw; display:flex; justify-content:space-between;
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; gap:10px;
+}
+
+/* ---------- reveal on scroll ---------- */
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+.glitch-hover{ position:relative; }
+.glitch-hover:hover{ animation:glitchshift .25s steps(2) 2; }
+@keyframes glitchshift{
+  0%{ transform:translate(0,0); }
+  25%{ transform:translate(-2px,1px); }
+  50%{ transform:translate(2px,-1px); }
+  100%{ transform:translate(0,0); }
+}
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div id="boot">
+  <pre id="boot-text"></pre>
+  <div class="skip" id="skip-boot">SKIP [ESC]</div>
+</div>
+
+<header>
+  <div class="brand"><span class="ring"></span> XenomorphSk</div>
+  <nav>
+    <a href="#about">about</a>
+    <a href="#projects">dimensões</a>
+    <a href="#security">redteam</a>
+    <a href="#contact">contato</a>
+  </nav>
+  <div class="nav-status"><span class="dot"></span> SESSION_ACTIVE :: C-137</div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="portal-wrap"><div class="portal"></div></div>
+  <span class="hero-eyebrow"><span class="blip">●</span> root@curitiba:~$ whoami</span>
+  <h1>Gabriel<br>Skura<br><span class="glitch glitch-hover">Ribeiro</span></h1>
+  <p class="hero-sub">
+    Pesquisador independente navegando entre dimensões: de bugs críticos em produção
+    a correspondências holográficas em hardware quântico real. Sem instituição, sem atalho —
+    só hipótese, teste e o que sobra depois de tentar quebrar a própria ideia.
+  </p>
+  <div class="hero-row">
+    <a class="btn primary" href="#projects">ver as dimensões →</a>
+    <a class="btn" href="https://www.linkedin.com/in/gabriel-skura-ribeiro-701a91254/" target="_blank" rel="noopener">linkedin.com/in/gabriel-skura</a>
+    <a class="btn" href="https://github.com/XenomorphSk" target="_blank" rel="noopener">github.com/XenomorphSk</a>
+  </div>
+  <div class="hero-tags">
+    <span class="tag">offensive security</span>
+    <span class="tag">quantum computing</span>
+    <span class="tag">computational biology</span>
+    <span class="tag">curitiba, br</span>
+    <span class="tag">self-taught</span>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="reveal">
+  <span class="eyebrow">Log_0001</span>
+  <h2 class="title">Sobre a frequência</h2>
+  <p class="lede">Duas linhas que, na prática, são a mesma pergunta: como um sistema falha — quando o sistema é uma API corporativa, e quando o sistema é a própria realidade física.</p>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>20 anos, autodidata, baseado em Curitiba (PR). Comecei em <strong>segurança ofensiva</strong> — pentest, bug bounty, descoberta de zero-days e uma menção honrosa do Google — encontrando os pontos onde sistemas em produção quebram a própria lógica de confiança que prometem.</p>
+      <p>O mesmo instinto de "onde isso quebra?" migrou para pesquisa de fronteira: <strong>física quântica</strong>, <strong>machine learning</strong> e <strong>biologia computacional</strong>, sem afiliação institucional, sem atalho de validação. A regra é simples: hipóteses e critérios de falsificação são fixados <em>antes</em> de ver os dados, bugs são documentados, e resultados negativos pesam o mesmo que os positivos.</p>
+      <p>Inspiração declarada: <strong>Mr. Robot</strong>, pela ideia de que todo sistema tem uma falha estrutural esperando ser encontrada — e <strong>Rick and Morty</strong>, pelo "it from bit" informal: a realidade como um multiverso de configurações possíveis, a maioria delas falsificável.</p>
+    </div>
+    <div class="dossier">
+      <div class="dossier-head"><span>dossier.txt</span><span>[unclassified]</span></div>
+      <div class="row"><span class="k">Base</span><span class="v">Curitiba, PR — BR</span></div>
+      <div class="row"><span class="k">Origem</span><span class="v">Offensive Security</span></div>
+      <div class="row"><span class="k">Foco atual</span><span class="v">Quantum · ML · CompBio</span></div>
+      <div class="row"><span class="k">Afiliação</span><span class="v">Independente</span></div>
+      <div class="row"><span class="k">Metodologia</span><span class="v">Pré-registro / OWASP</span></div>
+      <div class="row"><span class="k">Princípio</span><span class="v">It From Bit (Wheeler)</span></div>
+      <div class="row"><span class="k">Stack</span><span class="v">Kali · Python · Qiskit</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="reveal">
+  <span class="eyebrow">Log_0002</span>
+  <h2 class="title">Dimensões exploradas</h2>
+  <p class="lede">Cada projeto é um universo com hipóteses pré-registradas e critério de falsificação próprio. Nem todos sobreviveram aos próprios testes — e isso é o ponto.</p>
+
+  <div class="dim-grid">
+
+    <div class="dim-card">
+      <div class="dim-id">DIM // AMR-NEQ</div>
+      <h3>AMR-NEQ</h3>
+      <div class="status"><span class="dot"></span> hardware real · IBM Quantum</div>
+      <p>Caracterização de degradação de ruído em processadores NISQ e teste da correspondência holográfica Ryu-Takayanagi em hardware real (ibm_kingston, ibm_marrakesh, ibm_fez).</p>
+      <div class="stack"><span>Qiskit</span><span>IBM Quantum</span><span>Holografia</span><span>NISQ</span></div>
+      <div class="findings">
+        12 testes pré-registrados <em>não</em> atingiram o threshold · 4 teoremas provados analiticamente ·
+        árvores superaram cadeias em até <em>53×</em> no estado GHZ, validado em hardware real.
+      </div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-id">DIM // CYTOS</div>
+      <h3>CYTOS</h3>
+      <div class="status"><span class="dot"></span> preprint + lib pip</div>
+      <p>Estudo comparativo pré-registrado entre Tree Tensor Networks (TTNs) e Graph Neural Networks (GNNs) para modelar a dinâmica de redes regulatórias genéticas.</p>
+      <div class="stack"><span>TTN</span><span>GNN</span><span>Pré-registro</span><span>Python</span></div>
+      <div class="findings">
+        Hipóteses confirmadas e falsificadas com peso igual · preprint publicado ·
+        biblioteca <em>pip-installable</em> · submissão para Emergent Ventures.
+      </div>
+      <a class="link" href="https://github.com/XenomorphSk/CYTOS" target="_blank" rel="noopener">github.com/XenomorphSk/CYTOS →</a>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-id">DIM // D.A.N.T.E.</div>
+      <h3>D.A.N.T.E.</h3>
+      <div class="status"><span class="dot"></span> 100% local · em desenvolvimento</div>
+      <p>Assistente de pesquisa em IA rodando inteiramente local via Ollama (qwen2.5-coder:7b) — arquitetura modular com módulo de falsificação, memória persistente e suporte a pré-registro.</p>
+      <div class="stack"><span>Ollama</span><span>qwen2.5-coder</span><span>Agentes</span><span>Local-first</span></div>
+      <div class="findings">
+        Bug aberto no loop do agente: argumentos malformados em <em>criterios_json</em> —
+        próxima dimensão a depurar.
+      </div>
+    </div>
+
+    <div class="dim-card">
+      <div class="dim-id">DIM // M.A.N.I.A.C.</div>
+      <h3>M.A.N.I.A.C.</h3>
+      <div class="status"><span class="dot"></span> segundo cérebro pessoal</div>
+      <p>Grafo de conhecimento pessoal (FastAPI + Supabase/pgvector + Gemini API + D3.js) conectando conceitos entre física, matemática, hacking e biologia.</p>
+      <div class="stack"><span>FastAPI</span><span>pgvector</span><span>D3.js</span><span>Gemini API</span></div>
+      <div class="findings">
+        Rastreamento de status epistêmico · checagem adversarial de hipóteses ·
+        detecção de pontes entre domínios · entrada por voz, tudo em português.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security" class="reveal">
+  <span class="eyebrow">Log_0003</span>
+  <h2 class="title">Red Team & AppSec</h2>
+  <p class="lede">De onde tudo começou: encontrar a falha que o sistema não sabia que tinha. Especialista em falhas de autenticação, controle de acesso e configuração de APIs corporativas.</p>
+
+  <div class="sec-banner">
+    [!] casos abaixo anonimizados — instituições financeiras, plataformas educacionais e e-commerces de grande porte. PoCs e disclosure responsável, sempre.
+  </div>
+
+  <div class="case-list">
+    <div class="case">
+      <span class="sev high">CRÍTICO</span>
+      <div><h4>2FA Bypass — autenticação corporativa</h4><p>Falha no fluxo de segundo fator permitindo contorno completo da verificação em sistema de autenticação corporativo.</p></div>
+    </div>
+    <div class="case">
+      <span class="sev high">CRÍTICO</span>
+      <div><h4>IDOR + vazamento de JWT — plataforma educacional</h4><p>Quebra de controle de acesso (IDOR/BOLA) expondo tokens JWT de outros usuários em plataforma de ensino.</p></div>
+    </div>
+    <div class="case">
+      <span class="sev med">MÉDIO</span>
+      <div><h4>CORS Misconfiguration — API bancária</h4><p>Configuração inadequada de CORS expondo estrutura interna de API de instituição financeira.</p></div>
+    </div>
+    <div class="case">
+      <span class="sev high">CRÍTICO</span>
+      <div><h4>Path Traversal — exposição de endpoints internos</h4><p>Travessia de diretório permitindo acesso a endpoints e recursos internos não destinados ao público.</p></div>
+    </div>
+  </div>
+
+  <div class="eyebrow" style="margin-top:56px;">Toolkit</div>
+  <div class="tool-cloud">
+    <span>Burp Suite</span><span>Python</span><span>SQLMap</span><span>Linux</span>
+    <span>OWASP Testing Guide</span><span>OWASP API Top 10</span><span>JWT</span><span>CORS</span>
+    <span>SSRF</span><span>Reverse Engineering</span><span>Malware Analysis</span><span>OSINT</span>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section id="manifesto" class="reveal">
+  <span class="eyebrow" style="justify-content:center;">Log_∞ // transmissões interceptadas</span>
+  <div class="tx-list" style="margin-top:46px;">
+    <div class="tx">
+      <div class="tx-id">tx_01 :: mudança de alvo</div>
+      <blockquote>
+        Antes eu hackeava sistemas... isso não me contenta mais —
+        <span class="hl">agora preciso hackear a realidade.</span>
+      </blockquote>
+      <cite>— nota pessoal</cite>
+    </div>
+    <div class="tx">
+      <div class="tx-id">tx_02 :: it from bit</div>
+      <blockquote>
+        O universo não é o palco onde a informação atua;
+        <span class="hl">a informação é o material de construção do palco.</span>
+      </blockquote>
+      <cite>— nota pessoal</cite>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="reveal">
+  <span class="eyebrow">Log_0004</span>
+  <h2 class="title">Abrir um portal</h2>
+  <p class="lede" style="margin:0 auto;">Em busca de oportunidades em Red Team, AppSec, Vulnerability Research — ou de quem queira discutir os teoremas, os bugs e os resultados negativos.</p>
+  <div class="contact-row">
+    <a class="btn primary" href="https://www.linkedin.com/in/gabriel-skura-ribeiro-701a91254/" target="_blank" rel="noopener">LinkedIn →</a>
+    <a class="btn" href="https://github.com/XenomorphSk" target="_blank" rel="noopener">GitHub →</a>
+    <a class="btn" href="https://github.com/XenomorphSk/CYTOS" target="_blank" rel="noopener">CYTOS repo →</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
+  <span>build: independente · sem afiliação institucional · C-137</span>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- boot sequence ---------- */
+const bootLines = [
+  "INITIALIZING SESSION :: XenomorphSk@C-137",
+  "loading dossier... [OK]",
+  "mounting /dimensions/AMR-NEQ ... [OK]",
+  "mounting /dimensions/CYTOS ... [OK]",
+  "mounting /dimensions/D.A.N.T.E ... [WARN: criterios_json malformed]",
+  "mounting /dimensions/M.A.N.I.A.C ... [OK]",
+  "scanning for structural failure... ",
+  "> found.",
+  "opening portal_"
+];
+const bootEl = document.getElementById('boot-text');
+const bootScreen = document.getElementById('boot');
+let li = 0, ci = 0, out = "";
+
+function typeBoot(){
+  if(li >= bootLines.length){
+    setTimeout(closeBoot, 450);
+    return;
+  }
+  const line = bootLines[li];
+  if(ci <= line.length){
+    bootEl.innerHTML = out + line.slice(0, ci) + '<span class="cursor"></span>';
+    ci++;
+    setTimeout(typeBoot, 14 + Math.random()*22);
+  } else {
+    out += line + "\n";
+    li++; ci = 0;
+    setTimeout(typeBoot, 90);
+  }
+}
+function closeBoot(){
+  bootScreen.classList.add('hidden');
+  setTimeout(()=>{ bootScreen.style.display='none'; }, 700);
+}
+typeBoot();
+document.getElementById('skip-boot').addEventListener('click', closeBoot);
+window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeBoot(); });
+
+/* ---------- scroll reveal ---------- */
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* respect reduced motion */
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.documentElement.style.setProperty('scroll-behavior','auto');
+  closeBoot();
+}
+</script>
+
+</body>
+</html>
