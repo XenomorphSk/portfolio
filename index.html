@@ -117,6 +117,43 @@ nav a:hover::after{ width:100%; }
 .dot{ width:6px; height:6px; border-radius:50%; background:var(--portal-1); box-shadow:0 0 8px var(--portal-1); animation:pulse 2s ease-in-out infinite; }
 @keyframes pulse{ 50%{ opacity:.35; } }
 
+/* ---------- jump button ---------- */
+.jump-btn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+  padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:border-color .2s, color .2s;
+}
+.jump-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-icon{ display:inline-block; transition:transform .3s ease; }
+.jump-btn:hover .jump-icon{ transform:rotate(90deg); }
+@media (max-width:620px){ .jump-txt{ display:none; } .jump-btn{ padding:8px 11px; } }
+
+/* ---------- flash de destaque ao pular de dimensão ---------- */
+@keyframes dimFlash{
+  0%{ box-shadow:inset 0 0 0 0 rgba(109,255,184,0); background:var(--void); }
+  30%{ box-shadow:inset 0 0 0 1px rgba(109,255,184,.8); background:#0b1310; }
+  100%{ box-shadow:inset 0 0 0 0 rgba(109,255,184,0); background:var(--void); }
+}
+.dim-card.flash{ animation:dimFlash 1.1s ease-out; }
+
+/* ---------- cursor de portal ---------- */
+#portalCursor{
+  position:fixed; top:0; left:0; width:26px; height:26px; border-radius:50%;
+  border:1.5px solid var(--portal-1); box-shadow:0 0 12px rgba(109,255,184,.5);
+  pointer-events:none; z-index:19000; transform:translate(-50%,-50%);
+  transition:width .2s ease, height .2s ease, border-color .2s ease, opacity .2s ease;
+  mix-blend-mode:screen;
+}
+#portalCursor::before{
+  content:''; position:absolute; inset:4px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--portal-2), var(--portal-1), var(--acid), var(--portal-2));
+  opacity:.35; animation:spin 3s linear infinite;
+}
+#portalCursor.hovering{ width:40px; height:40px; border-color:var(--acid); }
+@media (hover:none), (pointer:coarse){ #portalCursor{ display:none; } }
+@media (prefers-reduced-motion: reduce){ #portalCursor{ display:none; } }
+
 /* ---------- layout helpers ---------- */
 section{ position:relative; padding:140px 6vw 100px; max-width:1180px; margin:0 auto; z-index:10; }
 .eyebrow{
@@ -302,6 +339,42 @@ h1 .glitch{ position:relative; display:inline-block; color:var(--portal-1); }
 }
 .tool-cloud span:hover{ border-color:var(--portal-1); color:var(--portal-1); }
 
+/* ---------- bug bounty ticker ---------- */
+.ticker{
+  margin-top:34px; border:1px solid var(--line); background:var(--panel);
+  overflow:hidden; position:relative; white-space:nowrap;
+}
+.ticker::before{
+  content:'LIVE'; position:absolute; left:0; top:0; bottom:0; z-index:2;
+  display:flex; align-items:center; gap:6px; padding:0 14px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; color:var(--void);
+  background:var(--portal-1); font-weight:800;
+}
+.ticker-track{
+  display:inline-flex; align-items:center; white-space:nowrap;
+  animation:ticker-scroll 32s linear infinite;
+  padding-left:100%;
+}
+.ticker:hover .ticker-track{ animation-play-state:paused; }
+.ticker-item{
+  display:inline-flex; align-items:center; gap:10px; padding:12px 30px;
+  font-family:var(--pmono); font-size:12.5px; color:var(--ink); border-right:1px solid var(--line);
+}
+.ticker-item .sev-tag{
+  font-family:var(--mono); font-size:10px; letter-spacing:.06em; padding:2px 7px;
+  border:1px solid currentColor;
+}
+.ticker-item .sev-tag.high{ color:var(--alert); }
+.ticker-item .sev-tag.med{ color:var(--acid); }
+.ticker-item .sep{ color:var(--ink-dim); }
+@keyframes ticker-scroll{
+  from{ transform:translateX(0); }
+  to{ transform:translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .ticker-track{ animation:none; padding-left:0; }
+}
+
 /* ---------- philosophy quote ---------- */
 #manifesto{ padding:120px 6vw; }
 .tx-list{ display:flex; flex-direction:column; gap:64px; max-width:880px; margin:0 auto; }
@@ -380,6 +453,15 @@ footer{
   </div>
 </div>
 
+<div id="portalCursor"></div>
+
+<div class="pt-overlay" id="txOverlay">
+  <div class="pt-inner">
+    <div class="pt-eyebrow">canal interdimensional // sinal captado</div>
+    <div class="pt-label" id="txLabel" style="font-size:clamp(15px,2.6vw,22px); text-transform:none;">—</div>
+  </div>
+</div>
+
 <canvas id="creature-canvas"></canvas>
 
 <div id="boot">
@@ -395,6 +477,9 @@ footer{
     <a href="#security">redteam</a>
     <a href="#contact">contato</a>
   </nav>
+  <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
+    <span class="jump-icon">⤳</span><span class="jump-txt">dimensão aleatória</span>
+  </button>
   <div class="nav-status"><span class="dot"></span> SESSION_ACTIVE :: C-137</div>
 </header>
 
@@ -458,7 +543,7 @@ footer{
 
   <div class="dim-grid">
 
-    <div class="dim-card">
+    <div class="dim-card" id="dim-amrneq">
       <div class="dim-id">DIM // AMR-NEQ</div>
       <h3>AMR-NEQ</h3>
       <div class="status"><span class="dot"></span> hardware real · IBM Quantum</div>
@@ -471,7 +556,7 @@ footer{
       <a class="link" href="manyworlds.html" data-transition="Abrindo dimensão">it from bit / many worlds →</a>
     </div>
 
-    <div class="dim-card">
+    <div class="dim-card" id="dim-cytos">
       <div class="dim-id">DIM // CYTOS</div>
       <h3>CYTOS</h3>
       <div class="status"><span class="dot"></span> preprint + lib pip</div>
@@ -484,7 +569,7 @@ footer{
       <a class="link" href="https://github.com/XenomorphSk/CYTOS" target="_blank" rel="noopener">github.com/XenomorphSk/CYTOS →</a>
     </div>
 
-    <div class="dim-card">
+    <div class="dim-card" id="dim-dante">
       <div class="dim-id">DIM // D.A.N.T.E.</div>
       <h3>D.A.N.T.E.</h3>
       <div class="status"><span class="dot"></span> 100% local · em desenvolvimento</div>
@@ -496,7 +581,7 @@ footer{
       </div>
     </div>
 
-    <div class="dim-card">
+    <div class="dim-card" id="dim-maniac">
       <div class="dim-id">DIM // M.A.N.I.A.C.</div>
       <h3>M.A.N.I.A.C.</h3>
       <div class="status"><span class="dot"></span> segundo cérebro pessoal</div>
@@ -518,6 +603,10 @@ footer{
 
   <div class="sec-banner">
     [!] casos abaixo anonimizados — instituições financeiras, plataformas educacionais e e-commerces de grande porte. PoCs e disclosure responsible, sempre.
+  </div>
+
+  <div class="ticker" role="marquee" aria-label="ticker de achados de segurança">
+    <div class="ticker-track" id="tickerTrack"></div>
   </div>
 
   <div class="case-list">
@@ -584,6 +673,7 @@ footer{
 
 <footer>
   <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
+  <span id="visitCounter">Dimensão C-137 · visita nº ····</span>
   <span>build: independente · sem afiliação institucional · C-137</span>
 </footer>
 
@@ -1050,6 +1140,8 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     setTimeout(()=>{ window.location.href = href; }, reduced ? 0 : 120);
   }
 
+  window.PortalTransition = { play: playTransition };
+
   document.querySelectorAll('a[data-transition]').forEach(link=>{
     link.addEventListener('click', function(e){
       if(link.target === '_blank') return;
@@ -1066,6 +1158,175 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     window.addEventListener('load', async ()=>{
       await Promise.all([ scramble(labelEl, revealText, 500), animateBar(600) ]);
       setTimeout(()=> overlay.classList.remove('active'), reduced ? 0 : 150);
+    });
+  }
+})();
+</script>
+
+<script>
+/* ---------- ticker de bug bounty ---------- */
+(function(){
+  const track = document.getElementById('tickerTrack');
+  if(!track) return;
+  const items = [
+    { sev:'high', label:'2FA Bypass', where:'autenticação corporativa' },
+    { sev:'high', label:'IDOR + JWT leak', where:'plataforma educacional' },
+    { sev:'med',  label:'CORS Misconfiguration', where:'API bancária' },
+    { sev:'high', label:'Path Traversal', where:'endpoints internos expostos' },
+    { sev:'high', label:'SSRF', where:'API corporativa' },
+    { sev:'med',  label:'JWT sem verificação de assinatura', where:'e-commerce' },
+  ];
+  function buildHTML(){
+    return items.map(it => `
+      <span class="ticker-item">
+        <span class="sev-tag ${it.sev}">${it.sev === 'high' ? 'crítico' : 'médio'}</span>
+        <span>${it.label}</span>
+        <span class="sep">·</span>
+        <span>${it.where}</span>
+      </span>
+    `).join('');
+  }
+  // duplica o conteúdo para o loop ficar contínuo (translateX -50%)
+  track.innerHTML = buildHTML() + buildHTML();
+})();
+
+/* ---------- cursor de portal ---------- */
+(function(){
+  const cursor = document.getElementById('portalCursor');
+  if(!cursor) return;
+  if(window.matchMedia('(hover:none), (pointer:coarse)').matches) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let cx = mx, cy = my;
+
+  window.addEventListener('mousemove', (e)=>{
+    mx = e.clientX; my = e.clientY;
+    cursor.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', ()=>{ cursor.style.opacity = '0'; });
+
+  document.addEventListener('mouseover', (e)=>{
+    if(e.target.closest('a, button, input[type=range], .dim-card')){
+      cursor.classList.add('hovering');
+    }
+  });
+  document.addEventListener('mouseout', (e)=>{
+    if(e.target.closest('a, button, input[type=range], .dim-card')){
+      cursor.classList.remove('hovering');
+    }
+  });
+
+  function loop(){
+    cx += (mx - cx) * 0.18;
+    cy += (my - cy) * 0.18;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ---------- pular de dimensão aleatoriamente ---------- */
+(function(){
+  const btn = document.getElementById('jumpBtn');
+  if(!btn) return;
+
+  const DIMENSIONS = [
+    { label:'AMR-NEQ / Many Worlds', file:'manyworlds.html', hash:'' },
+    { label:'CYTOS',                  file:'index.html',      hash:'#dim-cytos' },
+    { label:'D.A.N.T.E.',             file:'index.html',      hash:'#dim-dante' },
+    { label:'M.A.N.I.A.C.',           file:'index.html',      hash:'#dim-maniac' },
+    { label:'Sobre / Dossiê',         file:'index.html',      hash:'#about' },
+    { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
+  ];
+
+  function currentFile(){
+    const p = window.location.pathname.split('/').pop();
+    return p === '' ? 'index.html' : p;
+  }
+
+  btn.addEventListener('click', ()=>{
+    const here = currentFile();
+    const hereHash = window.location.hash;
+    let pool = DIMENSIONS.filter(d => !(d.file === here && d.hash === hereHash));
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+
+    if(pick.file !== here){
+      if(window.PortalTransition){
+        window.PortalTransition.play('Saltando · ' + pick.label, pick.file + pick.hash);
+      } else {
+        window.location.href = pick.file + pick.hash;
+      }
+    } else {
+      window.location.hash = pick.hash;
+      const target = document.querySelector(pick.hash);
+      if(target && target.classList.contains('dim-card')){
+        setTimeout(()=>{
+          target.classList.add('flash');
+          setTimeout(()=> target.classList.remove('flash'), 1200);
+        }, 350);
+      }
+    }
+  });
+})();
+
+/* ---------- easter egg: canal interdimensional ---------- */
+(function(){
+  const ring = document.querySelector('.avatar-ring');
+  const overlay = document.getElementById('txOverlay');
+  const label = document.getElementById('txLabel');
+  if(!ring || !overlay) return;
+
+  const TRANSMISSIONS = [
+    'seed 8675 · I₃ = −0.531 · p ≈ 0 · HOLOGRAFIA GENUÍNA',
+    'seed 2024 · D_ens = 0.789 · MI_ratio = 1.52',
+    'Handshake · ibm_kingston · Δ médio +0.466 · p = 0.0265',
+    'τ_holo = 9.24 gates de Pauli · τ_rand = indefinido',
+    'gap [[5,1,3]] vs ITFROMBIT: 0.510 → fechado em 0.011',
+    '"a antena funciona. o que ela recebe ainda é desconhecido."',
+    'canal C_v3a: |ZZ_holo| = 0.636 vs |ZZ_rand| = 0.083',
+  ];
+
+  let clicks = [];
+  ring.style.cursor = 'pointer';
+  ring.addEventListener('click', ()=>{
+    const now = Date.now();
+    clicks.push(now);
+    clicks = clicks.filter(t => now - t < 3000);
+    if(clicks.length >= 5){
+      clicks = [];
+      const msg = TRANSMISSIONS[Math.floor(Math.random()*TRANSMISSIONS.length)];
+      label.textContent = msg;
+      overlay.classList.add('active');
+      setTimeout(()=> overlay.classList.remove('active'), 1900);
+    }
+  });
+  overlay.addEventListener('click', ()=> overlay.classList.remove('active'));
+})();
+
+/* ---------- contador de visitas tipo multiverso ---------- */
+(function(){
+  const el = document.getElementById('visitCounter');
+  if(!el) return;
+  try{
+    const KEY = 'xsk_visit_count';
+    const n = (parseInt(localStorage.getItem(KEY) || '0', 10) || 0) + 1;
+    localStorage.setItem(KEY, String(n));
+    el.textContent = 'Dimensão C-137 · visita nº ' + String(n).padStart(4,'0');
+  }catch(e){ /* localStorage indisponível — mantém texto padrão */ }
+})();
+
+/* ---------- flash ao chegar direto com hash de dim-card ---------- */
+(function(){
+  if(!location.hash) return;
+  const target = document.querySelector(location.hash);
+  if(target && target.classList.contains('dim-card')){
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>{
+        target.classList.add('flash');
+        setTimeout(()=> target.classList.remove('flash'), 1200);
+      }, 500);
     });
   }
 })();

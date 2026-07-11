@@ -54,6 +54,35 @@ nav a{ color:var(--ink-dim); position:relative; padding:4px 0; transition:color 
 nav a:hover{ color:var(--portal-1); }
 nav a.back::before{ content:'← '; }
 
+/* ---------- jump button ---------- */
+.jump-btn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+  padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:border-color .2s, color .2s;
+}
+.jump-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-icon{ display:inline-block; transition:transform .3s ease; }
+.jump-btn:hover .jump-icon{ transform:rotate(90deg); }
+@media (max-width:620px){ .jump-txt{ display:none; } .jump-btn{ padding:8px 11px; } }
+
+/* ---------- cursor de portal ---------- */
+#portalCursor{
+  position:fixed; top:0; left:0; width:26px; height:26px; border-radius:50%;
+  border:1.5px solid var(--portal-1); box-shadow:0 0 12px rgba(109,255,184,.5);
+  pointer-events:none; z-index:19000; transform:translate(-50%,-50%);
+  transition:width .2s ease, height .2s ease, border-color .2s ease, opacity .2s ease;
+  mix-blend-mode:screen;
+}
+#portalCursor::before{
+  content:''; position:absolute; inset:4px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--portal-2), var(--portal-1), var(--acid), var(--portal-2));
+  opacity:.35; animation:spin 3s linear infinite;
+}
+#portalCursor.hovering{ width:40px; height:40px; border-color:var(--acid); }
+@media (hover:none), (pointer:coarse){ #portalCursor{ display:none; } }
+@media (prefers-reduced-motion: reduce){ #portalCursor{ display:none; } }
+
 section{ position:relative; padding:120px 6vw 90px; max-width:1180px; margin:0 auto; z-index:10; }
 .eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
   color:var(--portal-1); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
@@ -199,6 +228,8 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
   </div>
 </div>
 
+<div id="portalCursor"></div>
+
 <header>
   <div class="brand"><span class="ring"></span> XenomorphSk</div>
   <nav>
@@ -206,6 +237,9 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
     <a href="#simulator">simulador</a>
     <a href="#results">resultados</a>
   </nav>
+  <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
+    <span class="jump-icon">⤳</span><span class="jump-txt">dimensão aleatória</span>
+  </button>
 </header>
 
 <main>
@@ -596,6 +630,8 @@ loop();
     setTimeout(()=>{ window.location.href = href; }, reduced ? 0 : 120);
   }
 
+  window.PortalTransition = { play: playTransition };
+
   document.querySelectorAll('a[data-transition]').forEach(link=>{
     link.addEventListener('click', function(e){
       if(link.target === '_blank') return;
@@ -616,6 +652,82 @@ loop();
       }, reduced ? 0 : 150);
     });
   }
+})();
+</script>
+
+<script>
+/* ---------- cursor de portal ---------- */
+(function(){
+  const cursor = document.getElementById('portalCursor');
+  if(!cursor) return;
+  if(window.matchMedia('(hover:none), (pointer:coarse)').matches) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let cx = mx, cy = my;
+
+  window.addEventListener('mousemove', (e)=>{
+    mx = e.clientX; my = e.clientY;
+    cursor.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', ()=>{ cursor.style.opacity = '0'; });
+
+  document.addEventListener('mouseover', (e)=>{
+    if(e.target.closest('a, button, input[type=range], .dim-card')){
+      cursor.classList.add('hovering');
+    }
+  });
+  document.addEventListener('mouseout', (e)=>{
+    if(e.target.closest('a, button, input[type=range], .dim-card')){
+      cursor.classList.remove('hovering');
+    }
+  });
+
+  function loop(){
+    cx += (mx - cx) * 0.18;
+    cy += (my - cy) * 0.18;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ---------- pular de dimensão aleatoriamente ---------- */
+(function(){
+  const btn = document.getElementById('jumpBtn');
+  if(!btn) return;
+
+  const DIMENSIONS = [
+    { label:'AMR-NEQ / Many Worlds', file:'manyworlds.html', hash:'' },
+    { label:'CYTOS',                  file:'index.html',      hash:'#dim-cytos' },
+    { label:'D.A.N.T.E.',             file:'index.html',      hash:'#dim-dante' },
+    { label:'M.A.N.I.A.C.',           file:'index.html',      hash:'#dim-maniac' },
+    { label:'Sobre / Dossiê',         file:'index.html',      hash:'#about' },
+    { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
+  ];
+
+  function currentFile(){
+    const p = window.location.pathname.split('/').pop();
+    return p === '' ? 'index.html' : p;
+  }
+
+  btn.addEventListener('click', ()=>{
+    const here = currentFile();
+    const hereHash = window.location.hash;
+    let pool = DIMENSIONS.filter(d => !(d.file === here && d.hash === hereHash));
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+
+    if(pick.file !== here){
+      if(window.PortalTransition){
+        window.PortalTransition.play('Saltando · ' + pick.label, pick.file + pick.hash);
+      } else {
+        window.location.href = pick.file + pick.hash;
+      }
+    } else {
+      window.location.hash = pick.hash;
+    }
+  });
 })();
 </script>
 
