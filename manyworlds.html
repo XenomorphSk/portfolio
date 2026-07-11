@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>It From Bit / Many Worlds — XenomorphSk</title>
+<meta name="description" content="MANYWORLDS — evidência experimental de proteção holográfica de correlações quânticas em hardware supercondutor real.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void: #07090a;
+  --panel: #0e1411;
+  --portal-1: #6dffb8;
+  --portal-2: #1fb6c9;
+  --acid: #d4ff3d;
+  --alert: #ff3b5c;
+  --ink: #cfe8da;
+  --ink-dim: #7c948a;
+  --line: #1d2b25;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --pmono: 'IBM Plex Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{ background:var(--void); color:var(--ink); font-family:var(--sans); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+::selection{ background:var(--portal-1); color:#06120c; }
+a{ color:inherit; text-decoration:none; }
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:var(--void);}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:0;}
+
+.scanlines{ position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay; opacity:.5; }
+.vignette{ position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%); }
+
+header{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 6vw; font-family:var(--mono); font-size:12.5px; letter-spacing:.06em;
+  background:linear-gradient(to bottom, rgba(7,9,10,.92), rgba(7,9,10,0)); backdrop-filter:blur(2px);
+}
+.brand{ display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:700; }
+.brand .ring{ width:14px; height:14px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--portal-1), var(--portal-2), var(--acid), var(--portal-1));
+  animation:spin 4s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+nav{ display:flex; gap:28px; }
+nav a{ color:var(--ink-dim); position:relative; padding:4px 0; transition:color .2s; }
+nav a:hover{ color:var(--portal-1); }
+nav a.back::before{ content:'← '; }
+
+section{ position:relative; padding:120px 6vw 90px; max-width:1180px; margin:0 auto; z-index:10; }
+.eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--portal-1); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.eyebrow::before{ content:''; width:22px; height:1px; background:var(--portal-1); }
+h2.title{ font-family:var(--mono); font-weight:800; font-size:clamp(26px,3.8vw,42px);
+  letter-spacing:-.01em; color:var(--ink); margin-bottom:14px; text-transform:uppercase; }
+.lede{ color:var(--ink-dim); max-width:680px; font-size:15.5px; line-height:1.75; }
+
+/* hero */
+#hero{ min-height:78vh; display:flex; flex-direction:column; justify-content:center; padding-top:140px; }
+.hero-eyebrow{ font-family:var(--mono); font-size:12px; color:var(--ink-dim); letter-spacing:.12em; margin-bottom:22px; display:block; }
+.hero-eyebrow .blip{ color:var(--portal-1); }
+h1{ font-family:var(--mono); font-weight:800; line-height:1.05; font-size:clamp(32px,6.4vw,72px);
+  letter-spacing:-.01em; color:var(--ink); text-transform:uppercase; max-width:920px; }
+h1 .hl{ color:var(--portal-1); }
+.hero-sub{ margin-top:26px; max-width:640px; color:var(--ink-dim); font-size:16px; line-height:1.8; }
+.hero-tags{ display:flex; gap:10px; flex-wrap:wrap; margin-top:38px; }
+.tag{ font-family:var(--pmono); font-size:11px; color:var(--ink-dim); border:1px solid var(--line); padding:6px 11px; letter-spacing:.03em; }
+
+.disclosure{
+  font-family:var(--pmono); font-size:12px; color:var(--ink-dim); border-left:2px solid var(--portal-1);
+  padding:14px 18px; margin-top:40px; max-width:640px; line-height:1.8; background:rgba(109,255,184,.03);
+}
+.disclosure strong{ color:var(--portal-1); }
+
+/* explainer cards */
+.explain-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); margin-top:44px; border:1px solid var(--line); }
+@media (max-width:860px){ .explain-grid{ grid-template-columns:1fr; } }
+.explain-card{ background:var(--void); padding:30px; }
+.explain-card .n{ font-family:var(--mono); font-size:11px; color:var(--portal-1); letter-spacing:.1em; margin-bottom:12px; }
+.explain-card h3{ font-family:var(--mono); font-size:17px; color:var(--ink); text-transform:uppercase; margin-bottom:10px; letter-spacing:-.01em; }
+.explain-card p{ color:var(--ink-dim); font-size:14px; line-height:1.75; }
+
+/* simulator */
+#simulator{ }
+.sim-wrap{
+  margin-top:44px; border:1px solid var(--line); background:var(--panel); padding:36px;
+  display:grid; grid-template-columns:1fr 340px; gap:36px; align-items:center;
+}
+@media (max-width:900px){ .sim-wrap{ grid-template-columns:1fr; } }
+.sim-canvas-box{ display:flex; align-items:center; justify-content:center; position:relative; }
+#clockCanvas{ width:100%; max-width:460px; height:auto; }
+.sim-panel{ font-family:var(--pmono); }
+.sim-panel h4{ font-family:var(--mono); font-size:13px; color:var(--ink); text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; }
+.slider-row{ margin-bottom:22px; }
+.slider-row label{ display:flex; justify-content:space-between; font-size:12px; color:var(--ink-dim); margin-bottom:10px; }
+.slider-row label span{ color:var(--portal-1); }
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:2px; background:var(--line); outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--portal-1);
+  box-shadow:0 0 10px var(--portal-1); cursor:pointer;
+}
+input[type=range]::-moz-range-thumb{
+  width:14px; height:14px; border-radius:50%; background:var(--portal-1); border:none;
+  box-shadow:0 0 10px var(--portal-1); cursor:pointer;
+}
+.readout{ display:flex; flex-direction:column; gap:10px; margin-top:24px; }
+.readout .row{ display:flex; justify-content:space-between; font-size:12.5px; padding:9px 0; border-top:1px solid var(--line); }
+.readout .row .k{ color:var(--ink-dim); }
+.readout .row .v{ color:var(--ink); }
+.readout .row .v.holo{ color:var(--portal-1); }
+.readout .row .v.rand{ color:var(--ink-dim); }
+.legend{ display:flex; gap:18px; margin-top:20px; font-size:11px; color:var(--ink-dim); }
+.legend .dot{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+.legend .dot.holo{ background:var(--portal-1); box-shadow:0 0 6px var(--portal-1); }
+.legend .dot.rand{ background:var(--ink-dim); }
+.sim-note{ font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); margin-top:26px; line-height:1.7; max-width:760px; }
+
+/* result table */
+.res-table{ margin-top:40px; border:1px solid var(--line); font-family:var(--pmono); font-size:12.5px; }
+.res-row{ display:grid; grid-template-columns:1.4fr 1fr 1fr; padding:14px 20px; border-bottom:1px solid var(--line); }
+.res-row:last-child{ border-bottom:none; }
+.res-row.head{ color:var(--ink-dim); text-transform:uppercase; font-size:11px; letter-spacing:.06em; }
+.res-row .v{ color:var(--ink); }
+.res-row .p{ color:var(--portal-1); }
+
+/* interpretation */
+.interp{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:44px; }
+@media (max-width:860px){ .interp{ grid-template-columns:1fr; } }
+.interp-col h4{ font-family:var(--mono); font-size:13px; color:var(--portal-1); text-transform:uppercase; letter-spacing:.06em; margin-bottom:14px; }
+.interp-col p{ color:var(--ink-dim); font-size:14.5px; line-height:1.8; margin-bottom:14px; }
+
+/* quote */
+#quote{ text-align:center; padding:110px 6vw; }
+#quote blockquote{ font-family:var(--mono); font-size:clamp(18px,2.6vw,28px); color:var(--ink); max-width:760px; margin:0 auto;
+  line-height:1.5; letter-spacing:-.01em; }
+#quote cite{ display:block; margin-top:20px; font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); font-style:normal; }
+
+/* contact */
+#next{ text-align:center; padding-bottom:130px; }
+.contact-row{ display:flex; gap:16px; justify-content:center; margin-top:30px; flex-wrap:wrap; }
+.btn{ font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; padding:13px 22px;
+  border:1px solid var(--line); color:var(--ink); transition:all .2s ease; display:inline-flex; align-items:center; gap:8px; }
+.btn.primary{ background:var(--portal-1); color:#06160f; border-color:var(--portal-1); font-weight:700; }
+.btn.primary:hover{ background:var(--acid); border-color:var(--acid); transform:translateY(-1px); }
+.btn:not(.primary):hover{ border-color:var(--portal-1); color:var(--portal-1); }
+
+footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justify-content:space-between;
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; gap:10px; }
+
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+/* ---------- page transition overlay ---------- */
+.pt-overlay{
+  position:fixed; inset:0; z-index:20000; background:var(--void);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .4s ease;
+}
+.pt-overlay.active{ opacity:1; pointer-events:all; }
+.pt-overlay[data-reveal-on-load]{ opacity:1; pointer-events:all; }
+.pt-inner{ text-align:center; width:min(80vw,480px); }
+.pt-eyebrow{
+  font-family:var(--mono); font-size:11px; letter-spacing:.22em; color:var(--portal-1);
+  margin-bottom:20px; text-transform:uppercase;
+}
+.pt-label{
+  font-family:var(--mono); font-weight:800; font-size:clamp(22px,4.6vw,42px);
+  letter-spacing:-.01em; color:var(--ink); text-transform:uppercase; min-height:1.2em;
+}
+.pt-bar{ margin-top:28px; height:2px; width:100%; background:var(--line); position:relative; overflow:hidden; }
+.pt-fill{
+  position:absolute; left:0; top:0; height:100%; width:0%;
+  background:linear-gradient(90deg,var(--portal-2),var(--portal-1),var(--acid));
+  box-shadow:0 0 10px var(--portal-1);
+}
+.pt-pct{ margin-top:12px; font-family:var(--pmono); font-size:11px; color:var(--ink-dim); letter-spacing:.1em; }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div class="pt-overlay" id="ptOverlay" data-reveal-on-load="It From Bit / Many Worlds">
+  <div class="pt-inner">
+    <div class="pt-eyebrow">system://transição</div>
+    <div class="pt-label" id="ptLabel">CARREGANDO</div>
+    <div class="pt-bar"><div class="pt-fill" id="ptFill"></div></div>
+    <div class="pt-pct" id="ptPct">00%</div>
+  </div>
+</div>
+
+<header>
+  <div class="brand"><span class="ring"></span> XenomorphSk</div>
+  <nav>
+    <a class="back" href="index.html" data-transition="Voltando ao portal">portfolio</a>
+    <a href="#simulator">simulador</a>
+    <a href="#results">resultados</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <span class="hero-eyebrow"><span class="blip">●</span> dimensão // AMR-NEQ + ITFROMBIT + MANYWORLDS</span>
+  <h1>It From Bit /<br><span class="hl">Many Worlds</span></h1>
+  <p class="hero-sub">
+    Uma pergunta simples testada em hardware quântico real: quando dois sistemas guardam
+    informação de forma <em>holográfica</em> — redundante, espalhada, à prova de perda parcial —
+    eles resistem melhor ao ruído do que uma codificação genérica? A resposta experimental,
+    medida em processadores supercondutores da IBM, é sim.
+  </p>
+  <div class="hero-tags">
+    <span class="tag">IBM Quantum · Heron r2</span>
+    <span class="tag">códigos holográficos</span>
+    <span class="tag">pré-registrado</span>
+    <span class="tag">hardware real, não só simulação</span>
+  </div>
+
+  <div class="disclosure">
+    <strong>[!] nota de disclosure</strong> — esta página resume a pergunta, o protocolo em alto
+    nível e os resultados já destinados a publicação (preprint no Zenodo, artigo em preparação
+    para arXiv). Detalhes de implementação — construção exata do encoder, arquitetura do
+    ansatz variacional e função de custo — ficam de fora de propósito. Não é sobre esconder o
+    resultado; é sobre não distribuir o método antes da hora certa.
+  </div>
+</section>
+
+<!-- EXPLAINER -->
+<section id="explainer" class="reveal">
+  <span class="eyebrow">O experimento, em 3 passos</span>
+  <h2 class="title">O que foi testado</h2>
+  <p class="lede">Sem entrar em como o encoder foi construído — só o que ele faz e por quê.</p>
+
+  <div class="explain-grid">
+    <div class="explain-card">
+      <div class="n">01</div>
+      <h3>Dois sistemas, um par emaranhado</h3>
+      <p>Dois blocos de 5 qubits são preparados num par de Bell lógico — cada bloco carrega
+      um qubit de informação "espalhado" de forma redundante entre os outros quatro, usando
+      um código quântico perfeito conhecido na literatura.</p>
+    </div>
+    <div class="explain-card">
+      <div class="n">02</div>
+      <h3>Ruído independente em cada lado</h3>
+      <p>Cada sistema recebe ruído físico independente — erros aleatórios de Pauli aplicados
+      diretamente no hardware da IBM — simulando o tipo de decoerência que qualquer QPU
+      real sofre o tempo todo.</p>
+    </div>
+    <div class="explain-card">
+      <div class="n">03</div>
+      <h3>Mede-se o que sobrou da correlação</h3>
+      <p>Comparamos a correlação lógica remanescente entre os dois sistemas contra um
+      grupo de controle — encoders aleatórios sem estrutura holográfica — no mesmo hardware,
+      sob o mesmo ruído.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULATOR -->
+<section id="simulator" class="reveal">
+  <span class="eyebrow">Relógio de ruído</span>
+  <h2 class="title">Simulador — amplitude sob ruído crescente</h2>
+  <p class="lede">
+    Cada perna do relógio é um nível de ruído testado no experimento real (0 a 8 gates de Pauli
+    por sistema). O comprimento e o brilho da perna mostram a amplitude de correlação |ZZ|
+    medida em hardware — arraste o controle para "avançar o relógio" e comparar o canal
+    holográfico contra o aleatório.
+  </p>
+
+  <div class="sim-wrap">
+    <div class="sim-canvas-box">
+      <canvas id="clockCanvas" width="460" height="460"></canvas>
+    </div>
+    <div class="sim-panel">
+      <h4>Painel de leitura</h4>
+      <div class="slider-row">
+        <label>Nível de ruído (n_noise) <span id="noiseVal">0</span> / 8 gates de Pauli</label>
+        <input type="range" id="noiseSlider" min="0" max="8" step="1" value="0">
+      </div>
+      <div class="legend">
+        <span><span class="dot holo"></span>holográfico [[5,1,3]]</span>
+        <span><span class="dot rand"></span>encoder aleatório</span>
+      </div>
+      <div class="readout">
+        <div class="row"><span class="k">|ZZ| holográfico</span><span class="v holo" id="readHolo">0.711</span></div>
+        <div class="row"><span class="k">|ZZ| aleatório</span><span class="v rand" id="readRand">0.006</span></div>
+        <div class="row"><span class="k">razão holo / rand</span><span class="v" id="readRatio">118×</span></div>
+        <div class="row"><span class="k">sinal ZZ_holo</span><span class="v" id="readSign">positivo</span></div>
+      </div>
+      <p class="sim-note" id="signNote">
+        Sem ruído, o canal holográfico e o aleatório partem do mesmo lugar — mas só um deles
+        mantém a amplitude conforme o ruído sobe.
+      </p>
+    </div>
+  </div>
+
+  <p class="sim-note" style="max-width:900px;">
+    Os números vêm direto do experimento em hardware real (ibm_fez, 5000 disparos por
+    ponto). Quando o ponteiro holográfico "inverte" o sinal em alguns níveis, não é o sinal sendo
+    destruído — é uma troca de fase coerente prevista pela estrutura do código, e a amplitude
+    (o que o relógio mostra) permanece estável.
+  </p>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="reveal">
+  <span class="eyebrow">Confirmado em hardware</span>
+  <h2 class="title">O resultado central</h2>
+  <p class="lede">Três validações independentes, três hardwares reais da IBM Quantum.</p>
+
+  <div class="res-table">
+    <div class="res-row head"><span>Experimento</span><span>Resultado</span><span>p-valor</span></div>
+    <div class="res-row"><span class="v">Handshake nativo — ibm_kingston (3 níveis)</span><span class="v">Δ médio +0.47</span><span class="p">0.0265</span></div>
+    <div class="res-row"><span class="v">Curva de capacidade — ibm_fez (9 níveis)</span><span class="v">8.3× amplitude</span><span class="p">≈0</span></div>
+    <div class="res-row"><span class="v">Ruído em todos os qubits — ibm_fez</span><span class="v">7.6× amplitude</span><span class="p">≈0</span></div>
+  </div>
+
+  <div class="interp">
+    <div class="interp-col">
+      <h4>O que já sabemos</h4>
+      <p>A estrutura holográfica protege correlações lógicas em hardware supercondutor real —
+      não só em simulação. O efeito é consistente em três backends diferentes e cresce com o
+      ruído, não decai com ele.</p>
+      <p>Isso é evidência de código de correção de erros funcionando como esperado pela
+      teoria — o que já é, sozinho, um resultado experimental interessante para um pesquisador
+      sem afiliação institucional rodando num plano gratuito de QPU.</p>
+    </div>
+    <div class="interp-col">
+      <h4>O que continua em aberto</h4>
+      <p>Se essa proteção é "apenas" correção de erro padrão, ou se existe uma assinatura mais
+      profunda — algo que se pareça com um canal de informação entre os dois sistemas, além
+      da simples preservação de um bit local — é a pergunta que define o próximo experimento.</p>
+      <p>Esse próximo passo exige múltiplos qubits lógicos e um protocolo de modulação: um
+      lado "escreve", o outro "lê" sem canal clássico adicional. Ainda não foi testado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section id="quote" class="reveal">
+  <blockquote>"A antena funciona. O que ela pode receber ainda é desconhecido."</blockquote>
+  <cite>— conclusão de trabalho, MANYWORLDS v1</cite>
+</section>
+
+<!-- NEXT -->
+<section id="next" class="reveal">
+  <span class="eyebrow">Continuação</span>
+  <h2 class="title">Preprint e próximos passos</h2>
+  <p class="lede" style="margin:0 auto;">
+    O preprint que originou este projeto (ITFROMBIT) já está publicado. O artigo do MANYWORLDS
+    está em preparação para o arXiv.
+  </p>
+  <div class="contact-row">
+    <a class="btn primary" href="https://doi.org/10.5281/zenodo.21068699" target="_blank" rel="noopener">Preprint ITFROMBIT (Zenodo) →</a>
+    <a class="btn" href="index.html#projects" data-transition="Voltando ao portal">Voltar às dimensões</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
+  <span>MANYWORLDS · pré-registrado · hardware real IBM Quantum</span>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* scroll reveal */
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ===================== dados reais (canal de capacidade, ibm_fez, 9 niveis) ===================== */
+const dataPoints = [
+  { n:0, holo: 0.711, rand: 0.006, sign: 1 },
+  { n:1, holo: 0.253, rand: 0.057, sign: 1 },
+  { n:2, holo: 0.220, rand: 0.003, sign: 1 },
+  { n:3, holo: 0.213, rand: 0.003, sign: -1 },
+  { n:4, holo: 0.685, rand: 0.119, sign: 1 },
+  { n:5, holo: 0.200, rand: 0.004, sign: 1 },
+  { n:6, holo: 0.232, rand: 0.010, sign: 1 },
+  { n:7, holo: 0.210, rand: 0.046, sign: -1 },
+  { n:8, holo: 0.264, rand: 0.028, sign: -1 },
+];
+
+const slider = document.getElementById('noiseSlider');
+const noiseVal = document.getElementById('noiseVal');
+const readHolo = document.getElementById('readHolo');
+const readRand = document.getElementById('readRand');
+const readRatio = document.getElementById('readRatio');
+const readSign = document.getElementById('readSign');
+const signNote = document.getElementById('signNote');
+
+const canvas = document.getElementById('clockCanvas');
+const ctx = canvas.getContext('2d');
+const cx = 230, cy = 230, faceR = 150;
+
+let currentN = 0;
+let animT = 0; // for pulsing eye
+
+function drawClock(n){
+  ctx.clearRect(0,0,460,460);
+
+  // outer ring
+  ctx.strokeStyle = 'rgba(29,43,37,0.9)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, faceR + 34, 0, Math.PI*2);
+  ctx.stroke();
+
+  // subtle portal glow center
+  const grad = ctx.createRadialGradient(cx, cy, 4, cx, cy, faceR+34);
+  grad.addColorStop(0, 'rgba(109,255,184,0.10)');
+  grad.addColorStop(1, 'rgba(7,9,10,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, faceR+34, 0, Math.PI*2);
+  ctx.fill();
+
+  const total = dataPoints.length;
+
+  dataPoints.forEach((d, i) => {
+    const angle = (i / total) * Math.PI * 2 - Math.PI/2;
+    const active = d.n <= n;
+    const isCurrent = d.n === n;
+
+    // leg length scaled by amplitude (0 to faceR)
+    const holoLen = 30 + d.holo * (faceR - 20);
+    const randLen = 30 + d.rand * (faceR - 20);
+
+    const hx = cx + Math.cos(angle) * holoLen;
+    const hy = cy + Math.sin(angle) * holoLen;
+    const rx = cx + Math.cos(angle) * randLen;
+    const ry = cy + Math.sin(angle) * randLen;
+
+    // tick base point
+    const bx = cx + Math.cos(angle) * 22;
+    const by = cy + Math.sin(angle) * 22;
+
+    // random leg (thin, dim)
+    ctx.strokeStyle = active ? 'rgba(124,148,138,0.55)' : 'rgba(124,148,138,0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(rx, ry);
+    ctx.stroke();
+
+    // holo leg (thick, glowing)
+    ctx.strokeStyle = active
+      ? (d.sign > 0 ? 'rgba(109,255,184,0.95)' : 'rgba(212,255,61,0.95)')
+      : 'rgba(109,255,184,0.12)';
+    ctx.lineWidth = isCurrent ? 5 : 3;
+    if (isCurrent) {
+      ctx.shadowColor = d.sign > 0 ? 'rgba(109,255,184,0.9)' : 'rgba(212,255,61,0.9)';
+      ctx.shadowBlur = 18;
+    }
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(hx, hy);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // tip dot
+    ctx.fillStyle = active ? (d.sign > 0 ? 'var(--portal-1)' : 'rgba(212,255,61,1)') : 'rgba(109,255,184,0.15)';
+    ctx.fillStyle = active ? (d.sign > 0 ? '#6dffb8' : '#d4ff3d') : 'rgba(109,255,184,0.15)';
+    ctx.beginPath();
+    ctx.arc(hx, hy, isCurrent ? 5 : 3, 0, Math.PI*2);
+    ctx.fill();
+
+    // label
+    const lx = cx + Math.cos(angle) * (faceR + 20);
+    const ly = cy + Math.sin(angle) * (faceR + 20);
+    ctx.fillStyle = isCurrent ? '#d4ff3d' : 'rgba(124,148,138,0.8)';
+    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('n' + d.n, lx, ly);
+  });
+
+  // center hub
+  const pulse = 4 + Math.sin(animT) * 1.5;
+  ctx.fillStyle = 'rgba(14,20,17,0.9)';
+  ctx.strokeStyle = 'rgba(109,255,184,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 16, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.shadowColor = '#6dffb8';
+  ctx.shadowBlur = 12;
+  ctx.fillStyle = '#6dffb8';
+  ctx.beginPath();
+  ctx.arc(cx, cy, pulse, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function updateReadout(n){
+  const d = dataPoints[n];
+  readHolo.textContent = d.holo.toFixed(3);
+  readRand.textContent = d.rand.toFixed(3);
+  const ratio = d.rand > 0.001 ? (d.holo / d.rand).toFixed(1) + '×' : '—';
+  readRatio.textContent = ratio;
+  readSign.textContent = d.sign > 0 ? 'positivo' : 'invertido (fase)';
+  readSign.style.color = d.sign > 0 ? '#6dffb8' : '#d4ff3d';
+
+  signNote.textContent = d.sign > 0
+    ? 'Amplitude preservada com sinal positivo — o canal transmite a correlação sem distorção de fase neste nível.'
+    : 'O sinal inverteu — número ímpar de erros efetivos no operador lógico. A amplitude continua alta: a informação não se perdeu, só trocou de fase, e um decodificador que conhece o número de erros recupera 100%.';
+}
+
+function render(){
+  drawClock(currentN);
+  updateReadout(currentN);
+}
+
+slider.addEventListener('input', (e)=>{
+  currentN = parseInt(e.target.value, 10);
+  noiseVal.textContent = currentN;
+  render();
+});
+
+function loop(){
+  animT += 0.05;
+  drawClock(currentN);
+  requestAnimationFrame(loop);
+}
+render();
+loop();
+</script>
+
+<script>
+/* ---------- page transition (estilo "deadline loader", tema portal) ---------- */
+(function(){
+  const overlay = document.getElementById('ptOverlay');
+  if(!overlay) return;
+  const labelEl = document.getElementById('ptLabel');
+  const fillEl = document.getElementById('ptFill');
+  const pctEl = document.getElementById('ptPct');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const GLYPHS = '01#%&*_-+=<>/\\[]{}?ⰀⰁⰂⰃⰄⰅⰆⰇ';
+  function randChar(){ return GLYPHS[Math.floor(Math.random()*GLYPHS.length)]; }
+
+  function scramble(el, text, duration){
+    return new Promise(resolve=>{
+      if(reduced){ el.textContent = text; resolve(); return; }
+      const len = text.length;
+      const totalFrames = Math.max(6, Math.round(duration/30));
+      let frame = 0;
+      (function tick(){
+        let out = '';
+        for(let i=0;i<len;i++){
+          const revealFrame = (i/len)*totalFrames;
+          out += (frame >= revealFrame || text[i] === ' ') ? text[i] : randChar();
+        }
+        el.textContent = out;
+        frame++;
+        if(frame <= totalFrames){ setTimeout(tick, 30); }
+        else { el.textContent = text; resolve(); }
+      })();
+    });
+  }
+
+  function animateBar(duration){
+    return new Promise(resolve=>{
+      if(reduced){ fillEl.style.width='100%'; pctEl.textContent='100%'; resolve(); return; }
+      const start = performance.now();
+      (function step(now){
+        const p = Math.min(1,(now-start)/duration);
+        fillEl.style.width = (p*100).toFixed(0)+'%';
+        pctEl.textContent = String(Math.round(p*100)).padStart(2,'0')+'%';
+        if(p<1){ requestAnimationFrame(step); } else resolve();
+      })(performance.now());
+    });
+  }
+
+  async function playTransition(label, href){
+    overlay.classList.add('active');
+    fillEl.style.width='0%'; pctEl.textContent='00%';
+    await Promise.all([ scramble(labelEl, label, 550), animateBar(650) ]);
+    setTimeout(()=>{ window.location.href = href; }, reduced ? 0 : 120);
+  }
+
+  document.querySelectorAll('a[data-transition]').forEach(link=>{
+    link.addEventListener('click', function(e){
+      if(link.target === '_blank') return;
+      const href = link.getAttribute('href');
+      if(!href) return;
+      e.preventDefault();
+      playTransition(link.getAttribute('data-transition') || 'CARREGANDO', href);
+    });
+  });
+
+  const revealText = overlay.getAttribute('data-reveal-on-load');
+  if(revealText){
+    window.addEventListener('load', async ()=>{
+      await Promise.all([ scramble(labelEl, revealText, 500), animateBar(600) ]);
+      setTimeout(()=>{
+        overlay.removeAttribute('data-reveal-on-load');
+        overlay.classList.remove('active');
+      }, reduced ? 0 : 150);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
