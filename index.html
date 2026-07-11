@@ -1273,10 +1273,11 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
 
 /* ---------- easter egg: canal interdimensional ---------- */
 (function(){
-  const ring = document.querySelector('.avatar-ring');
+  const ring = document.querySelector('.avatar-frame');
   const overlay = document.getElementById('txOverlay');
   const label = document.getElementById('txLabel');
   if(!ring || !overlay) return;
+  ring.style.cursor = 'pointer';
 
   const TRANSMISSIONS = [
     'seed 8675 · I₃ = −0.531 · p ≈ 0 · HOLOGRAFIA GENUÍNA',
@@ -1289,7 +1290,6 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   ];
 
   let clicks = [];
-  ring.style.cursor = 'pointer';
   ring.addEventListener('click', ()=>{
     const now = Date.now();
     clicks.push(now);
