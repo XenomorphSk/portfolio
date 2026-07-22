@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Files — BUG / HUNTING // XenomorphSk</title>
+<meta name="description" content="Reports de bug bounty, honorable mentions e inteligência de ameaças independente — XenomorphSk.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void: #07090a;
+  --panel: #0e1411;
+  --portal-1: #6dffb8;
+  --portal-2: #1fb6c9;
+  --acid: #d4ff3d;
+  --alert: #ff3b5c;
+  --ink: #cfe8da;
+  --ink-dim: #7c948a;
+  --line: #1d2b25;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --pmono: 'IBM Plex Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{ background:var(--void); color:var(--ink); font-family:var(--sans); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+::selection{ background:var(--alert); color:#07090a; }
+a{ color:inherit; text-decoration:none; }
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:var(--void);}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:0;}
+
+.scanlines{ position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay; opacity:.5; }
+.vignette{ position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.62) 100%); }
+.redtone{ position:fixed; inset:0; pointer-events:none; z-index:1;
+  background: radial-gradient(ellipse at 15% 0%, rgba(255,59,92,.05), transparent 45%); }
+
+header{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:20px 6vw; font-family:var(--mono); font-size:12.5px; letter-spacing:.06em;
+  background:linear-gradient(to bottom, rgba(7,9,10,.92), rgba(7,9,10,0)); backdrop-filter:blur(2px);
+}
+.brand{ display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:700; }
+.brand .ring{ width:14px; height:14px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--alert), var(--portal-1), var(--acid), var(--alert));
+  animation:spin 4s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+nav{ display:flex; gap:26px; }
+nav a{ color:var(--ink-dim); position:relative; padding:4px 0; transition:color .2s; }
+nav a:hover{ color:var(--portal-1); }
+nav a.back::before{ content:'← '; }
+.jump-btn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+  padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:border-color .2s, color .2s;
+}
+.jump-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-icon{ display:inline-block; transition:transform .3s ease; }
+.jump-btn:hover .jump-icon{ transform:rotate(90deg); }
+@media (max-width:760px){ nav{ display:none; } }
+@media (max-width:620px){ .jump-txt{ display:none; } .jump-btn{ padding:8px 11px; } }
+
+section{ position:relative; padding:120px 6vw 90px; max-width:1180px; margin:0 auto; z-index:10; }
+.eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--portal-1); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.eyebrow::before{ content:''; width:22px; height:1px; background:var(--portal-1); }
+.eyebrow.red{ color:var(--alert); }
+.eyebrow.red::before{ background:var(--alert); }
+h2.title{ font-family:var(--mono); font-weight:800; font-size:clamp(26px,3.8vw,42px);
+  letter-spacing:-.01em; color:var(--ink); margin-bottom:14px; text-transform:uppercase; }
+.lede{ color:var(--ink-dim); max-width:680px; font-size:15.5px; line-height:1.75; }
+
+#hero{ min-height:70vh; display:flex; flex-direction:column; justify-content:center; padding-top:150px; }
+.hero-tag{ font-family:var(--mono); font-size:12px; color:var(--ink-dim); letter-spacing:.12em; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.hero-tag .blip{ color:var(--alert); animation:pulse 1.6s ease-in-out infinite; }
+@keyframes pulse{ 50%{ opacity:.3; } }
+h1{ font-family:var(--mono); font-weight:800; line-height:1.04; font-size:clamp(34px,6.6vw,74px);
+  letter-spacing:-.01em; color:var(--ink); text-transform:uppercase; }
+h1 .slash{ color:var(--ink-dim); font-weight:400; }
+h1 .b{ color:var(--portal-1); }
+h1 .h{ color:var(--alert); }
+.hero-sub{ margin-top:24px; max-width:640px; color:var(--ink-dim); font-size:16px; line-height:1.8; }
+.hero-jump{ display:flex; gap:14px; margin-top:36px; flex-wrap:wrap; }
+.hero-jump a{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:11px 20px; border:1px solid var(--line); color:var(--ink-dim); transition:all .2s ease;
+}
+.hero-jump a:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.hero-jump a.hunt:hover{ border-color:var(--alert); color:var(--alert); }
+
+.prompt-strip{
+  font-family:var(--pmono); font-size:12px; color:var(--ink-dim); margin-top:44px;
+  border:1px solid var(--line); background:var(--panel); padding:16px 20px; max-width:640px;
+}
+.prompt-strip .l{ display:block; margin-bottom:4px; }
+.prompt-strip .l:last-child{ margin-bottom:0; }
+.prompt-strip .p{ color:var(--portal-1); }
+.prompt-strip .out{ color:var(--ink); }
+
+.bug-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); margin-top:44px; border:1px solid var(--line); }
+@media (max-width:820px){ .bug-grid{ grid-template-columns:1fr; } }
+.bug-card{ background:var(--void); padding:30px; position:relative; overflow:hidden; }
+.bug-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--portal-1), var(--acid)); transform:scaleX(0); transform-origin:left; transition:transform .3s ease; }
+.bug-card:hover::before{ transform:scaleX(1); }
+.bug-card .row1{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.bug-card h3{ font-family:var(--mono); font-size:18px; color:var(--ink); text-transform:uppercase; letter-spacing:-.01em; }
+.bug-badge{ font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; padding:4px 9px; border:1px solid currentColor; white-space:nowrap; }
+.bug-badge.reward{ color:var(--portal-1); }
+.bug-badge.honorable{ color:var(--acid); }
+.bug-badge.progress{ color:var(--ink-dim); }
+.bug-card p{ color:var(--ink-dim); font-size:14px; line-height:1.75; margin-bottom:14px; }
+.bug-meta{ display:flex; flex-wrap:wrap; gap:8px; }
+.bug-meta span{ font-family:var(--pmono); font-size:10.5px; color:var(--ink-dim); border:1px solid var(--line); padding:4px 8px; }
+
+.triage-legend{ margin-top:44px; }
+.triage-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:18px; }
+@media (max-width:820px){ .triage-row{ grid-template-columns:repeat(2,1fr); } }
+.triage-cell{ background:var(--panel); padding:16px; }
+.triage-cell .tag{ font-family:var(--mono); font-size:10.5px; letter-spacing:.03em; margin-bottom:8px; display:block; }
+.triage-cell p{ font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); line-height:1.6; }
+.tag.high{ color:var(--alert); }
+.tag.mod{ color:var(--acid); }
+.tag.avail{ color:var(--ink-dim); }
+.tag.review{ color:var(--portal-1); }
+
+.other-programs{ margin-top:34px; display:flex; flex-wrap:wrap; gap:10px; }
+.other-programs span{ font-family:var(--pmono); font-size:12px; color:var(--ink); border:1px solid var(--line); padding:8px 14px; }
+
+.rfj-banner{
+  margin-top:38px; border:1px solid rgba(255,59,92,.35); background:rgba(255,59,92,.04);
+  padding:20px 22px; font-family:var(--pmono); font-size:12.5px; color:var(--ink-dim); line-height:1.85;
+}
+.rfj-banner strong{ color:var(--alert); }
+.rfj-banner a{ color:var(--alert); border-bottom:1px dotted var(--alert); }
+
+.safety-note{
+  margin-top:18px; border-left:2px solid var(--portal-1); padding:14px 18px; background:rgba(109,255,184,.03);
+  font-family:var(--pmono); font-size:12px; color:var(--ink-dim); line-height:1.8; max-width:760px;
+}
+.safety-note strong{ color:var(--portal-1); }
+
+.case-board{ margin-top:46px; border:1px solid var(--line); background:var(--panel); }
+.case-head{ display:flex; align-items:center; gap:20px; padding:26px 28px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.case-badge{
+  width:60px; height:60px; border:2px solid var(--alert); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative;
+}
+.case-badge::before{ content:''; position:absolute; inset:6px; border:1px solid var(--alert); border-radius:50%; opacity:.4; }
+.case-badge span{ font-family:var(--mono); font-weight:800; font-size:15px; color:var(--alert); letter-spacing:-.02em; }
+.case-head-text h3{ font-family:var(--mono); font-size:20px; color:var(--ink); text-transform:uppercase; letter-spacing:-.01em; margin-bottom:6px; }
+.case-head-text .meta{ font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); display:flex; gap:14px; flex-wrap:wrap; }
+.case-status{ margin-left:auto; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--alert); border:1px solid var(--alert); padding:6px 12px; display:flex; align-items:center; gap:7px; }
+.case-status .dot{ width:6px; height:6px; border-radius:50%; background:var(--alert); box-shadow:0 0 6px var(--alert); animation:pulse 1.6s ease-in-out infinite; }
+
+.case-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); }
+@media (max-width:760px){ .case-stats{ grid-template-columns:repeat(2,1fr); } }
+.case-stat{ background:var(--void); padding:20px 24px; }
+.case-stat .n{ font-family:var(--mono); font-size:26px; font-weight:800; color:var(--acid); }
+.case-stat .l{ font-family:var(--pmono); font-size:11px; color:var(--ink-dim); margin-top:6px; }
+
+.affiliate-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border-top:1px solid var(--line); }
+@media (max-width:900px){ .affiliate-grid{ grid-template-columns:1fr; } }
+.affiliate-card{ background:var(--void); padding:26px; }
+.aff-head{ display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.aff-photo{
+  width:44px; height:44px; border-radius:4px; flex-shrink:0; position:relative; overflow:hidden;
+  background:repeating-linear-gradient(45deg, #14201a, #14201a 4px, #0b120e 4px, #0b120e 8px);
+  border:1px solid var(--line);
+}
+.aff-photo::after{ content:'?'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); color:var(--ink-dim); font-weight:800; font-size:18px; }
+.aff-name{ font-family:var(--mono); font-size:14px; color:var(--ink); }
+.aff-sub{ font-family:var(--pmono); font-size:10.5px; color:var(--ink-dim); margin-top:2px; }
+.aff-wallet{
+  font-family:var(--pmono); font-size:10px; color:var(--ink-dim); background:rgba(0,0,0,.3);
+  padding:8px 10px; margin-bottom:12px; word-break:break-all; border-left:2px solid var(--line);
+}
+.aff-facts{ font-family:var(--pmono); font-size:12px; color:var(--ink-dim); line-height:1.9; }
+.aff-facts .hl{ color:var(--acid); }
+.aff-facts .hl2{ color:var(--alert); }
+
+.redacted{
+  display:inline-block; background:var(--ink); color:var(--ink); border-radius:2px; padding:0 4px;
+  cursor:help; transition:background .2s, color .2s; user-select:none;
+}
+.redacted:hover{ background:transparent; color:var(--alert); outline:1px dashed var(--alert); }
+
+.md-shell{ margin-top:50px; border:1px solid var(--line); background:#0a0f0c; }
+.md-titlebar{
+  display:flex; align-items:center; gap:10px; padding:12px 18px; border-bottom:1px solid var(--line);
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim);
+}
+.md-titlebar .dots{ display:flex; gap:6px; }
+.md-titlebar .dots span{ width:9px; height:9px; border-radius:50%; }
+.md-titlebar .dots span:nth-child(1){ background:var(--alert); }
+.md-titlebar .dots span:nth-child(2){ background:var(--acid); }
+.md-titlebar .dots span:nth-child(3){ background:var(--portal-1); }
+.md-viewer{
+  max-height:640px; overflow-y:auto; padding:32px 34px; font-family:var(--pmono); font-size:13px; line-height:1.85;
+  color:var(--ink-dim);
+}
+.md-viewer h4{ font-family:var(--mono); color:var(--portal-1); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  margin:34px 0 12px; }
+.md-viewer h4:first-child{ margin-top:0; }
+.md-viewer p{ margin-bottom:12px; }
+.md-viewer strong{ color:var(--ink); }
+.md-viewer code{ color:var(--acid); font-family:var(--pmono); background:rgba(212,255,61,.06); padding:1px 5px; }
+.md-viewer ul, .md-viewer ol{ margin:0 0 14px 22px; }
+.md-viewer li{ margin-bottom:6px; }
+.md-viewer table{ width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:12px; }
+.md-viewer th, .md-viewer td{ border:1px solid var(--line); padding:8px 10px; text-align:left; }
+.md-viewer th{ color:var(--ink); font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; }
+.md-viewer .hr{ border:none; border-top:1px solid var(--line); margin:26px 0; }
+.md-viewer .src-tag{ color:var(--portal-1); }
+.md-viewer .ok{ color:var(--portal-1); }
+.md-viewer .no{ color:var(--ink-dim); }
+.md-viewer .novel{ color:var(--acid); font-weight:700; }
+
+#next{ text-align:center; padding-bottom:130px; }
+.contact-row{ display:flex; gap:16px; justify-content:center; margin-top:30px; flex-wrap:wrap; }
+.btn{ font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; padding:13px 22px;
+  border:1px solid var(--line); color:var(--ink); transition:all .2s ease; display:inline-flex; align-items:center; gap:8px; }
+.btn.primary{ background:var(--portal-1); color:#06160f; border-color:var(--portal-1); font-weight:700; }
+.btn.primary:hover{ background:var(--acid); border-color:var(--acid); transform:translateY(-1px); }
+.btn:not(.primary):hover{ border-color:var(--portal-1); color:var(--portal-1); }
+
+footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justify-content:space-between;
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; gap:10px; }
+
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+.pt-overlay{
+  position:fixed; inset:0; z-index:20000; background:var(--void);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .4s ease;
+}
+.pt-overlay.active{ opacity:1; pointer-events:all; }
+.pt-overlay[data-reveal-on-load]{ opacity:1; pointer-events:all; }
+.pt-inner{ text-align:center; width:min(80vw,480px); }
+.pt-eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.22em; color:var(--alert); margin-bottom:20px; text-transform:uppercase; }
+.pt-label{ font-family:var(--mono); font-weight:800; font-size:clamp(22px,4.6vw,42px); letter-spacing:-.01em; color:var(--ink); text-transform:uppercase; min-height:1.2em; }
+.pt-bar{ margin-top:28px; height:2px; width:100%; background:var(--line); position:relative; overflow:hidden; }
+.pt-fill{ position:absolute; left:0; top:0; height:100%; width:0%;
+  background:linear-gradient(90deg,var(--alert),var(--acid),var(--portal-1)); box-shadow:0 0 10px var(--alert); }
+.pt-pct{ margin-top:12px; font-family:var(--pmono); font-size:11px; color:var(--ink-dim); letter-spacing:.1em; }
+
+#portalCursor{
+  position:fixed; top:0; left:0; width:26px; height:26px; border-radius:50%;
+  border:1.5px solid var(--alert); box-shadow:0 0 12px rgba(255,59,92,.45);
+  pointer-events:none; z-index:19000; transform:translate(-50%,-50%);
+  transition:width .2s ease, height .2s ease, border-color .2s ease, opacity .2s ease;
+  mix-blend-mode:screen;
+}
+#portalCursor::before{
+  content:''; position:absolute; inset:4px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--alert), var(--acid), var(--portal-1), var(--alert));
+  opacity:.35; animation:spin 3s linear infinite;
+}
+#portalCursor.hovering{ width:40px; height:40px; border-color:var(--acid); }
+@media (hover:none), (pointer:coarse){ #portalCursor{ display:none; } }
+@media (prefers-reduced-motion: reduce){ #portalCursor{ display:none; } }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="redtone"></div>
+
+<div class="pt-overlay" id="ptOverlay" data-reveal-on-load="Case Files // BUG · HUNTING">
+  <div class="pt-inner">
+    <div class="pt-eyebrow">system://acessando arquivos</div>
+    <div class="pt-label" id="ptLabel">CARREGANDO</div>
+    <div class="pt-bar"><div class="pt-fill" id="ptFill"></div></div>
+    <div class="pt-pct" id="ptPct">00%</div>
+  </div>
+</div>
+
+<div id="portalCursor"></div>
+
+<header>
+  <div class="brand"><span class="ring"></span> XenomorphSk</div>
+  <nav>
+    <a class="back" href="index.html" data-transition="Voltando ao portal">portfolio</a>
+    <a href="#bug">bug</a>
+    <a href="#hunting">hunting</a>
+  </nav>
+  <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
+    <span class="jump-icon">⤳</span><span class="jump-txt">dimensão aleatória</span>
+  </button>
+</header>
+
+<main>
+
+<section id="hero">
+  <div class="hero-tag"><span class="blip">●</span> arquivo restrito // nível de acesso: público</div>
+  <h1>Case Files<br><span class="slash">/</span> <span class="b">BUG</span> <span class="slash">·</span> <span class="h">HUNTING</span></h1>
+  <p class="hero-sub">
+    Duas gavetas do mesmo arquivo. Uma com o que reportei e ganhei crédito por encontrar.
+    A outra com o que estou rastreando — não pra explorar, mas pra ajudar a identificar
+    quem já explorou os outros.
+  </p>
+
+  <div class="prompt-strip">
+    <span class="l"><span class="p">$</span> whoami</span>
+    <span class="l out">XenomorphSk · pesquisador independente · sem afiliação institucional</span>
+    <span class="l"><span class="p">$</span> cat clearance.txt</span>
+    <span class="l out">dados públicos · disclosure responsável · nenhum acesso não autorizado</span>
+  </div>
+
+  <div class="hero-jump">
+    <a href="#bug">↓ ir pra BUG</a>
+    <a href="#hunting" class="hunt">↓ ir pra HUNTING</a>
+  </div>
+</section>
+
+<section id="bug" class="reveal">
+  <span class="eyebrow">Gaveta 01</span>
+  <h2 class="title">BUG — reports & honorable mentions</h2>
+  <p class="lede">
+    O que encontrei, reportei e o que os programas fizeram com isso — incluindo os casos em
+    que o "prêmio" foi só o crédito.
+  </p>
+
+  <div class="bug-grid">
+
+    <div class="bug-card">
+      <div class="row1">
+        <h3>Skia / Chrome VRP</h3>
+        <span class="bug-badge reward">recompensa estimada</span>
+      </div>
+      <p>
+        Bug de type-promotion identificado em <code style="font-family:var(--pmono);color:var(--acid);">SkBmpRLECodec.cpp</code>,
+        validado com AddressSanitizer e submetido com relatório completo (Issue 531478064).
+        O Google escalou a severidade em minutos: prioridade P4→P3, severidade S4→S3.
+      </p>
+      <div class="bug-meta">
+        <span>ASan verificado</span>
+        <span>P4 → P3</span>
+        <span>S4 → S3</span>
+        <span>faixa estimada $2.500–$4.000</span>
+      </div>
+    </div>
+
+    <div class="bug-card">
+      <div class="row1">
+        <h3>HarfBuzz — "Repacker Bomb"</h3>
+        <span class="bug-badge honorable">honorable mention</span>
+      </div>
+      <p>
+        ~6 semanas de trabalho numa condição de negação de serviço no repacker. Classificado
+        como <em style="color:var(--ink);font-style:normal;">availability-only</em> — honorable
+        mention, sem recompensa monetária. Foi esse caso que me fez criar um sistema de
+        triagem antes de investir em PoC ou relatório.
+      </p>
+      <div class="bug-meta">
+        <span>~6 semanas</span>
+        <span>availability-only</span>
+        <span>sem recompensa</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="triage-legend">
+    <span class="eyebrow" style="margin-top:0;">O que o HarfBuzz me ensinou</span>
+    <p class="lede">Desde então, toda descoberta é classificada nessas 4 categorias antes de eu investir tempo em prova de conceito:</p>
+    <div class="triage-row">
+      <div class="triage-cell"><span class="tag high">MEMORY_SAFETY_HIGH_VALUE</span><p>RCE, corrupção de memória explorável — prioridade máxima de PoC.</p></div>
+      <div class="triage-cell"><span class="tag mod">MEMORY_SAFETY_MODERATE</span><p>Corrupção real, mas de exploração limitada ou incerta.</p></div>
+      <div class="triage-cell"><span class="tag avail">AVAILABILITY_ONLY</span><p>DoS/crash sem via clara de escalada — geralmente honorable mention.</p></div>
+      <div class="triage-cell"><span class="tag review">NEEDS_MANUAL_REVIEW</span><p>Sinal ambíguo — precisa de mais investigação antes de decidir.</p></div>
+    </div>
+  </div>
+
+  <span class="eyebrow" style="margin-top:52px;">Outros programas ativos</span>
+  <div class="other-programs">
+    <span>dav1d</span><span>QEMU</span><span>strongSwan</span><span>Cloudflare quiche</span><span>Zimbra</span>
+  </div>
+</section>
+
+<section id="hunting" class="reveal">
+  <span class="eyebrow red">Gaveta 02</span>
+  <h2 class="title">HUNTING — inteligência de ameaças independente</h2>
+  <p class="lede">
+    Pesquisa OSINT e forense de blockchain sobre operações de ransomware, feita inteiramente
+    com dados públicos — na linha do que o programa Rewards for Justice do Departamento de
+    Estado dos EUA usa pra identificar operadores de grupos como o LockBit.
+  </p>
+
+  <div class="rfj-banner">
+    <strong>[ REWARDS FOR JUSTICE ]</strong> — o governo dos EUA oferece até <strong>US$10 milhões</strong>
+    por informações que levem à identificação/localização de operadores do LockBit
+    (o administrador da rede, conhecido como "LockBitSupp"/Dmitry Khoroshev, foi indiciado
+    em maio de 2024 com recompensa nesse valor). Programa oficial:
+    <a href="https://rewardsforjustice.net/" target="_blank" rel="noopener">rewardsforjustice.net</a>.
+    Minha pesquisa não tem afiliação com o governo dos EUA — é trabalho independente que
+    segue a mesma lógica de inteligência pública que esse tipo de programa depende.
+  </div>
+
+  <div class="safety-note">
+    <strong>[!] nota de segurança</strong> — tudo abaixo vem de um dataset já público (vazamento
+    do painel LockBit 4.0 de maio/2025, autenticidade confirmada por TRM Labs, Forescout,
+    Trellix e Cisco Talos). Nenhum acesso não autorizado foi feito. Identificadores de atribuição
+    e a vítima do setor financeiro ainda não notificada foram <span class="redacted" title="retido — encaminhado às autoridades competentes">████████</span>
+    e encaminhados aos canais apropriados — não aparecem aqui.
+  </div>
+
+  <div class="case-board">
+    <div class="case-head">
+      <div class="case-badge"><span>LB</span></div>
+      <div class="case-head-text">
+        <h3>LockBit 4.0 — Afiliados não documentados</h3>
+        <div class="meta">
+          <span>fonte: painel breach, mai/2025</span>
+          <span>3 afiliados analisados</span>
+          <span>7 achados inéditos</span>
+        </div>
+      </div>
+      <div class="case-status"><span class="dot"></span> sob investigação</div>
+    </div>
+
+    <div class="case-stats">
+      <div class="case-stat"><div class="n">3</div><div class="l">wallets dormentes com saldo confirmado</div></div>
+      <div class="case-stat"><div class="n">44</div><div class="l">builds na campanha "n046" (9 países)</div></div>
+      <div class="case-stat"><div class="n">69</div><div class="l">vítimas de um único afiliado em 81 dias</div></div>
+      <div class="case-stat"><div class="n">21TB</div><div class="l">maior exfiltração única identificada</div></div>
+    </div>
+
+    <div class="affiliate-grid">
+      <div class="affiliate-card">
+        <div class="aff-head">
+          <div class="aff-photo"></div>
+          <div>
+            <div class="aff-name">umarbishop47</div>
+            <div class="aff-sub">advid 28 · tag "newbie"</div>
+          </div>
+        </div>
+        <div class="aff-wallet">bc1qx3e...vakgvt</div>
+        <div class="aff-facts">
+          53 builds (vs. ~8 em análises anteriores) · campanha <span class="hl">"n046"</span> —
+          batch de IAB não documentado, 8 países da América Latina + Europa ·
+          6 ataques simultâneos em janela de 2h (21/12/2024)
+        </div>
+      </div>
+
+      <div class="affiliate-card">
+        <div class="aff-head">
+          <div class="aff-photo"></div>
+          <div>
+            <div class="aff-name">ArrynBaird</div>
+            <div class="aff-sub">advid 13 · tag "newbie"</div>
+          </div>
+        </div>
+        <div class="aff-wallet">bc1qat8...zh5yd</div>
+        <div class="aff-facts">
+          13 vítimas confirmadas · resgates de $10k–$200k · build <span class="hl2">mac_200k</span> —
+          ataque a macOS não documentado em nenhuma base pública · pagou acesso ao painel em Monero
+        </div>
+      </div>
+
+      <div class="affiliate-card">
+        <div class="aff-head">
+          <div class="aff-photo"></div>
+          <div>
+            <div class="aff-name">btcdrugdealer</div>
+            <div class="aff-sub">advid 55 · tag "verified"</div>
+          </div>
+        </div>
+        <div class="aff-wallet">bc1qkhm...jvpt8q</div>
+        <div class="aff-facts">
+          69 vítimas em 81 dias (pico de 4/dia) · exfiltração de <span class="hl">21TB</span> via Linux ·
+          alvo no <span class="hl2">Irã</span> — atípico pra afiliados russos · tentativa não divulgada
+          contra corretora financeira regulamentada
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="md-shell">
+    <div class="md-titlebar">
+      <span class="dots"><span></span><span></span><span></span></span>
+      <span>$ cat lockbit_public_report.md</span>
+    </div>
+    <div class="md-viewer" id="mdViewer"></div>
+  </div>
+</section>
+
+<section id="next" class="reveal">
+  <span class="eyebrow">Continuação</span>
+  <h2 class="title">Mais casos, conforme forem fechados</h2>
+  <p class="lede" style="margin:0 auto;">
+    Esta gaveta cresce conforme novas investigações são concluídas e liberadas para publicação.
+  </p>
+  <div class="contact-row">
+    <a class="btn primary" href="index.html#security" data-transition="Voltando ao portal">Voltar pro Red Team →</a>
+    <a class="btn" href="https://www.linkedin.com/in/gabriel-skura-ribeiro-701a91254/" target="_blank" rel="noopener">LinkedIn →</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
+  <span>case files · dados públicos · disclosure responsável</span>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+document.getElementById('mdViewer').innerHTML = `
+<h4>Abstract</h4>
+<p>Após o vazamento do painel de afiliados do LockBit 4.0 em maio de 2025, várias empresas
+publicaram análises focadas nos cinco afiliados mais ativos por volume de mensagens
+(Christopher, Swan, PiotrBond, JamesCraig, Lofikdis). Este relatório documenta
+<strong>três afiliados que não aparecem em nenhuma publicação anterior</strong>, identificados por
+forense de blockchain independente e cruzamento de dataset.</p>
+<p>Toda a informação vem exclusivamente de dados públicos. Nenhum acesso não autorizado foi
+realizado. Identificadores de atribuição e vítimas específicas não notificadas foram
+submetidos aos canais apropriados de aplicação da lei e omitidos desta publicação.</p>
+
+<h4>Background</h4>
+<p>Em 7 de maio de 2025, um agente desconhecido violou o painel de afiliados dark web do
+LockBit 4.0 e divulgou um dump de banco MySQL (<code>paneldb_dump.zip</code>). O dataset cobre
+dezembro/2024 a abril/2025 e inclui 75 contas de afiliados, ~60.000 endereços BTC, 1.183
+builds de ransomware e logs de negociação. Pesquisadores da TRM Labs, Forescout/Vedere Labs,
+Trellix, Cisco Talos e Yarix publicaram análises focadas num subconjunto pequeno dos
+afiliados mais visíveis.</p>
+
+<h4>Metodologia</h4>
+<ol>
+  <li>Parsing dos CSVs de <span class="src-tag">github.com/Hexastrike/LockBit-Database-Leak-2025</span></li>
+  <li>Ranqueamento cruzado de <code>lockbit-users.csv</code>, <code>lockbit-bitcoin-addresses.csv</code> e <code>lockbit-files.csv</code> — todos os 35 afiliados com endereços BTC</li>
+  <li>Verificação on-chain via API pública do <code>mempool.space</code></li>
+  <li>Correlação de campanhas a partir de nomes de arquivo de build</li>
+  <li>Validação cruzada contra toda a literatura publicada, para confirmar ineditismo</li>
+</ol>
+
+<h4>Achado 1 — Três wallets ativas em afiliados não documentados</h4>
+<p>Das 35 wallets analisadas, apenas o top-5 já documentado tinha fundos on-chain confirmados
+— ou era o que se supunha. Esta pesquisa encontrou <strong>três wallets adicionais com atividade
+confirmada</strong>, nenhuma citada em publicação anterior:</p>
+<table>
+<tr><th>Afiliado</th><th>Recebido (sats)</th><th>Status</th></tr>
+<tr><td>umarbishop47</td><td>7.191.141</td><td>dormente — nunca movimentada</td></tr>
+<tr><td>ArrynBaird</td><td>1.906.015</td><td>dormente — nunca movimentada</td></tr>
+<tr><td>btcdrugdealer</td><td>465.493</td><td>dormente — nunca movimentada</td></tr>
+</table>
+<p>As três wallets receberam exatamente uma transação e nunca tiveram saída. Padrão
+consistente com "fundos administrativos parados" documentado pela TRM Labs — aqui aplicado a
+wallets de afiliados, sugerindo pagamentos de resgate nunca processados pelo fluxo de
+comissão padrão, possivelmente pela violação do painel interromper operações no fim de
+abril/2025.</p>
+
+<h4>Achado 2 — Campanha "n046": operação não documentada na América Latina</h4>
+<p><strong>umarbishop47</strong> (advid 28, tag "newbie") operou em escala muito maior do que a
+classificação sugere: <strong>53 builds</strong> no total (vs. ~8 visíveis em análises anteriores).
+O código de campanha <span class="novel">"n046"</span> aparece em 44 dos 53 nomes de arquivo — inédito
+em qualquer publicação de threat intel.</p>
+<table>
+<tr><th>País</th><th>Vítimas confirmadas</th></tr>
+<tr><td>Brasil</td><td>8</td></tr>
+<tr><td>México</td><td>5</td></tr>
+<tr><td>Argentina</td><td>3</td></tr>
+<tr><td>Colômbia</td><td>2</td></tr>
+<tr><td>Itália</td><td>2</td></tr>
+<tr><td>Bolívia</td><td>2</td></tr>
+<tr><td>Uruguai</td><td>1</td></tr>
+<tr><td>Espanha</td><td>1</td></tr>
+</table>
+<p><strong>Observação crítica de timing:</strong> seis dos primeiros ataques n046 ocorreram numa
+única janela de 2 horas em 21/12/2024, mirando empresas na Argentina, Espanha, Brasil (×2),
+Colômbia e Uruguai simultaneamente — padrão inconsistente com seleção manual de vítima, e
+consistente com <strong>compra em lote de um Initial Access Broker (IAB)</strong>. "n046" pode
+representar o número de lote 46 do catálogo desse fornecedor.</p>
+<p>Campanha secundária <span class="novel">"serebro"</span> (7 builds, Itália/EUA) usa uma fonte de acesso
+distinta, com alvo geograficamente incompatível com o foco latino-americano da n046.</p>
+<p>Vítimas já confirmadas publicamente pela n046 (anunciadas pelo próprio LockBit,
+via ransomware.live): NICATEL S.A. (Uruguai), ATP Formosa (Argentina), Gelco Gelatinas do
+Brasil, Candelas y Asociados S.L. (Espanha), Pasteurizadora La Mejor S.A. (Colômbia). As
+demais 17+ vítimas da n046 seguem não identificadas publicamente.</p>
+
+<h4>Achado 3 — ArrynBaird: 13 vítimas, incluindo ataque macOS não documentado</h4>
+<p><strong>ArrynBaird</strong> (advid 13, "newbie") conduziu 13 ataques confirmados entre janeiro e
+abril de 2025, com resgates de $10.000 a $200.000. Um build com a notação
+<code>mac_200k</code> (criado em 17/04/2025) indica um ataque a macOS com resgate de $200.000 —
+atípico pro LockBit, que majoritariamente ataca Windows e ESXi. Não aparece em nenhuma base
+de incidentes de ransomware. ArrynBaird também pagou a taxa de acesso ao painel em
+<strong>Monero</strong> (3.635 XMR) em vez de Bitcoin, indicando maior consciência operacional de
+segurança que os outros dois afiliados analisados.</p>
+
+<h4>Achado 4 — btcdrugdealer: 69 vítimas em 81 dias</h4>
+<p><strong>btcdrugdealer</strong> (advid 55, tag <strong>verified</strong>) é o mais operacionalmente ativo
+dos três afiliados documentados.</p>
+<table>
+<tr><th>Métrica</th><th>Valor</th></tr>
+<tr><td>Período ativo</td><td>02/02/2025 – 24/04/2025 (81 dias)</td></tr>
+<tr><td>Dias com atividade</td><td>41</td></tr>
+<tr><td>Vítimas únicas</td><td>69</td></tr>
+<tr><td>Pico de atividade</td><td>4 vítimas/dia</td></tr>
+<tr><td>Plataformas</td><td>Windows (principal), Linux, ESXi (VMware)</td></tr>
+</table>
+<p>Alvo em ESXi é significativo: um único host comprometido pode criptografar dezenas de VMs
+simultaneamente. Exfiltrações notáveis: 21TB via Linux/LockBit Green (13/02/2025) — a maior
+identificada entre os três afiliados — e 4TB via Windows (04/02/2025).</p>
+<p><strong>Alvo anômalo — Irã:</strong> um build de 07/02/2025 contém a notação <code>iran</code>. Os
+termos do LockBit proíbem ataques a países da CEI, mas não listam o Irã explicitamente. É um
+comportamento atípico para afiliados operando em ecossistemas alinhados à Rússia.</p>
+<p><strong>Tentativa não divulgada contra instituição financeira regulamentada:</strong> um registro na
+tabela de requisições inválidas do painel mostra btcdrugdealer tentando configurar um build
+contra uma corretora de câmbio regulamentada, com mais de 35 anos de operação e 238
+funcionários. A requisição foi bloqueada pelo rate limiter do painel em 17/02/2025. Não se
+sabe se o ataque foi executado por outros meios depois. Essa entidade não aparece em nenhuma
+base pública de vazamentos de ransomware.
+<span class="redacted" title="nome retido — encaminhado às autoridades competentes">[nome retido — encaminhado às autoridades competentes]</span></p>
+
+<h4>Rede de recrutadores</h4>
+<p>Cada afiliado entrou no painel via sistema de convite. As wallets que receberam as taxas de
+acesso não aparecem em nenhum outro lugar do dataset como afiliados registrados — indicando
+que os recrutadores operam num nível hierárquico acima, dentro do próprio ecossistema LockBit.</p>
+
+<h4>Comparação com pesquisa publicada anteriormente</h4>
+<table>
+<tr><th>Achado</th><th>TRM Labs (mai/2025)</th><th>Forescout (jun/2025)</th><th>Esta pesquisa</th></tr>
+<tr><td>Top-5 afiliados perfilados</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓ (replicado)</td></tr>
+<tr><td>Escala real de umarbishop47 (53 builds)</td><td class="no">✗</td><td>parcial (20 builds)</td><td class="novel">✓</td></tr>
+<tr><td>Código de campanha "n046"</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>Campanha secundária "serebro"</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>btcdrugdealer (69 vítimas)</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>ArrynBaird — ataque macOS $200k</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>3 wallets dormentes de afiliado</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>Identificação de wallets de recrutador</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>Alvo não divulgado no setor financeiro</td><td class="no">✗</td><td class="no">✗</td><td>✓ (retido)</td></tr>
+</table>
+
+<h4>Limitações</h4>
+<ul>
+  <li>A tabela de chats está redigida/censurada no repositório público — sem conteúdo de negociação disponível para cruzamento</li>
+  <li>Valores das wallets são modestos ($460–$7.200), sugerindo pagamentos parciais, não resgates completos</li>
+  <li>Atribuição a identidades reais não é possível só com dados públicos — a análise on-chain para no endereço de depósito da exchange</li>
+  <li>Identificação de vítimas limitada a padrões de slug e casos anunciados publicamente — muitas seguem não identificadas</li>
+</ul>
+
+<h4>Disclosure responsável</h4>
+<p>Identificadores de atribuição descobertos nesta pesquisa foram submetidos aos canais
+apropriados de aplicação da lei. A vítima não divulgada do setor financeiro foi sinalizada
+para notificação pelos canais apropriados. Nenhum dado de vítima, chave privada ou material
+de decriptação foi acessado ou é publicado aqui.</p>
+
+<h4>Indicadores de comprometimento (públicos)</h4>
+<p><strong>Wallets BTC com proventos de resgate (todas dormentes):</strong></p>
+<ul>
+  <li><code>bc1qx3e4eslyzhclzr4y4yexw3jhyw5n4xe4vakgvt</code> (umarbishop47)</li>
+  <li><code>bc1qat80jxvlng5gpt2er5ghz42zrd4f3dv36zh5yd</code> (ArrynBaird)</li>
+  <li><code>bc1qkhmyzj4kswwhrkdrt3ww0v2cvqrzcgh2jvpt8q</code> (btcdrugdealer)</li>
+</ul>
+<p><strong>Códigos de campanha (correlação de threat intel):</strong></p>
+<ul>
+  <li><code>n046</code> — campanha IAB em lote, América Latina / Península Ibérica, dez/2024 – abr/2025</li>
+  <li><code>serebro</code> — campanha secundária, Itália / EUA, mar/2025</li>
+</ul>
+
+<hr class="hr">
+<p style="font-size:11.5px;">Pesquisa de segurança independente. Todos os dados vêm de material publicamente
+disponível. Submetido de boa-fé em benefício da comunidade de segurança e das organizações
+afetadas. Fontes completas: TRM Labs, Forescout/Vedere Labs, Trellix, Cisco Talos, Hexastrike
+(GitHub), ransomware.live, mempool.space.</p>
+`;
+</script>
+
+<script>
+(function(){
+  const overlay = document.getElementById('ptOverlay');
+  if(!overlay) return;
+  const labelEl = document.getElementById('ptLabel');
+  const fillEl = document.getElementById('ptFill');
+  const pctEl = document.getElementById('ptPct');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const GLYPHS = '01#%&*_-+=<>/\\[]{}?ⰀⰁⰂⰃⰄⰅⰆⰇ';
+  function randChar(){ return GLYPHS[Math.floor(Math.random()*GLYPHS.length)]; }
+
+  function scramble(el, text, duration){
+    return new Promise(resolve=>{
+      if(reduced){ el.textContent = text; resolve(); return; }
+      const len = text.length;
+      const totalFrames = Math.max(6, Math.round(duration/30));
+      let frame = 0;
+      (function tick(){
+        let out = '';
+        for(let i=0;i<len;i++){
+          const revealFrame = (i/len)*totalFrames;
+          out += (frame >= revealFrame || text[i] === ' ') ? text[i] : randChar();
+        }
+        el.textContent = out;
+        frame++;
+        if(frame <= totalFrames){ setTimeout(tick, 30); }
+        else { el.textContent = text; resolve(); }
+      })();
+    });
+  }
+
+  function animateBar(duration){
+    return new Promise(resolve=>{
+      if(reduced){ fillEl.style.width='100%'; pctEl.textContent='100%'; resolve(); return; }
+      const start = performance.now();
+      (function step(now){
+        const p = Math.min(1,(now-start)/duration);
+        fillEl.style.width = (p*100).toFixed(0)+'%';
+        pctEl.textContent = String(Math.round(p*100)).padStart(2,'0')+'%';
+        if(p<1){ requestAnimationFrame(step); } else resolve();
+      })(performance.now());
+    });
+  }
+
+  async function playTransition(label, href){
+    overlay.classList.add('active');
+    fillEl.style.width='0%'; pctEl.textContent='00%';
+    await Promise.all([ scramble(labelEl, label, 550), animateBar(650) ]);
+    setTimeout(()=>{ window.location.href = href; }, reduced ? 0 : 120);
+  }
+
+  window.PortalTransition = { play: playTransition };
+
+  document.querySelectorAll('a[data-transition]').forEach(link=>{
+    link.addEventListener('click', function(e){
+      if(link.target === '_blank') return;
+      const href = link.getAttribute('href');
+      if(!href) return;
+      e.preventDefault();
+      playTransition(link.getAttribute('data-transition') || 'CARREGANDO', href);
+    });
+  });
+
+  const revealText = overlay.getAttribute('data-reveal-on-load');
+  if(revealText){
+    window.addEventListener('load', async ()=>{
+      await Promise.all([ scramble(labelEl, revealText, 500), animateBar(600) ]);
+      setTimeout(()=>{
+        overlay.removeAttribute('data-reveal-on-load');
+        overlay.classList.remove('active');
+      }, reduced ? 0 : 150);
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const cursor = document.getElementById('portalCursor');
+  if(!cursor) return;
+  if(window.matchMedia('(hover:none), (pointer:coarse)').matches) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let cx = mx, cy = my;
+
+  window.addEventListener('mousemove', (e)=>{
+    mx = e.clientX; my = e.clientY;
+    cursor.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', ()=>{ cursor.style.opacity = '0'; });
+
+  document.addEventListener('mouseover', (e)=>{
+    if(e.target.closest('a, button, .bug-card, .affiliate-card, .redacted')){
+      cursor.classList.add('hovering');
+    }
+  });
+  document.addEventListener('mouseout', (e)=>{
+    if(e.target.closest('a, button, .bug-card, .affiliate-card, .redacted')){
+      cursor.classList.remove('hovering');
+    }
+  });
+
+  function loop(){
+    cx += (mx - cx) * 0.18;
+    cy += (my - cy) * 0.18;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+(function(){
+  const btn = document.getElementById('jumpBtn');
+  if(!btn) return;
+
+  const DIMENSIONS = [
+    { label:'AMR-NEQ / Many Worlds', file:'manyworlds.html', hash:'' },
+    { label:'CYTOS',                  file:'index.html',      hash:'#dim-cytos' },
+    { label:'D.A.N.T.E.',             file:'index.html',      hash:'#dim-dante' },
+    { label:'M.A.N.I.A.C.',           file:'index.html',      hash:'#dim-maniac' },
+    { label:'Sobre / Dossiê',         file:'index.html',      hash:'#about' },
+    { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
+    { label:'Case Files — BUG',       file:'casefile.html',   hash:'#bug' },
+    { label:'Case Files — HUNTING',   file:'casefile.html',   hash:'#hunting' },
+  ];
+
+  function currentFile(){
+    const p = window.location.pathname.split('/').pop();
+    return p === '' ? 'index.html' : p;
+  }
+
+  btn.addEventListener('click', ()=>{
+    const here = currentFile();
+    const hereHash = window.location.hash;
+    let pool = DIMENSIONS.filter(d => !(d.file === here && d.hash === hereHash));
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+
+    if(pick.file !== here){
+      if(window.PortalTransition){
+        window.PortalTransition.play('Saltando · ' + pick.label, pick.file + pick.hash);
+      } else {
+        window.location.href = pick.file + pick.hash;
+      }
+    } else {
+      window.location.hash = pick.hash;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
