@@ -118,16 +118,17 @@ nav a:hover::after{ width:100%; }
 @keyframes pulse{ 50%{ opacity:.35; } }
 
 /* ---------- jump button ---------- */
-.jump-btn{
+.jump-btn, .lang-btn{
   font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
   background:transparent; border:1px solid var(--line); color:var(--ink-dim);
   padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
   transition:border-color .2s, color .2s;
 }
-.jump-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-btn:hover, .lang-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
 .jump-icon{ display:inline-block; transition:transform .3s ease; }
 .jump-btn:hover .jump-icon{ transform:rotate(90deg); }
 @media (max-width:620px){ .jump-txt{ display:none; } .jump-btn{ padding:8px 11px; } }
+@media (max-width:520px){ .lang-btn{ padding:8px 10px; font-size:10px; } }
 
 /* ---------- flash de destaque ao pular de dimensão ---------- */
 @keyframes dimFlash{
@@ -285,6 +286,8 @@ h1 .glitch{ position:relative; display:inline-block; color:var(--portal-1); }
 /* ---------- projects ---------- */
 .dim-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); margin-top:50px; border:1px solid var(--line); }
 @media (max-width:760px){ .dim-grid{ grid-template-columns:1fr; } }
+#dim-emperor{ grid-column:1 / -1; }
+#dim-emperor h3{ color:var(--alert); }
 .dim-card{
   background:var(--void); padding:34px; position:relative; overflow:hidden; cursor:pointer;
   transition:background .25s ease;
@@ -472,13 +475,14 @@ footer{
 <header>
   <div class="brand"><span class="ring"></span> XenomorphSk</div>
   <nav>
-    <a href="#about">about</a>
-    <a href="#projects">dimensões</a>
-    <a href="#security">redteam</a>
-    <a href="#contact">contato</a>
+    <a href="#about" data-i18n="nav_about">about</a>
+    <a href="#projects" data-i18n="nav_projects">dimensões</a>
+    <a href="#security" data-i18n="nav_security">redteam</a>
+    <a href="#contact" data-i18n="nav_contact">contato</a>
   </nav>
+  <button class="lang-btn" id="langBtn" title="mudar idioma">PT ⇄ EN</button>
   <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
-    <span class="jump-icon">⤳</span><span class="jump-txt">dimensão aleatória</span>
+    <span class="jump-icon">⤳</span><span class="jump-txt" data-i18n="jump">dimensão aleatória</span>
   </button>
   <div class="nav-status"><span class="dot"></span> SESSION_ACTIVE :: C-137</div>
 </header>
@@ -493,13 +497,13 @@ footer{
   </div>
   <span class="hero-eyebrow"><span class="blip">●</span> root@curitiba:~$ whoami</span>
   <h1>Gabriel<br>Skura<br><span class="glitch glitch-hover">Ribeiro</span></h1>
-  <p class="hero-sub">
+  <p class="hero-sub" data-i18n="hero_sub">
     Pesquisador independente navegando entre dimensões: de bugs críticos em produção
     a correspondências holográficas em hardware quântico real. Sem instituição, sem atalho —
     só hipótese, teste e o que sobra depois de tentar quebrar a própria ideia.
   </p>
   <div class="hero-row">
-    <a class="btn primary" href="#projects">ver as dimensões →</a>
+    <a class="btn primary" href="#projects" data-i18n="hero_btn_projects">ver as dimensões →</a>
     <a class="btn" href="https://www.linkedin.com/in/gabriel-skura-ribeiro-701a91254/" target="_blank" rel="noopener">linkedin.com/in/gabriel-skura</a>
     <a class="btn" href="https://github.com/XenomorphSk" target="_blank" rel="noopener">github.com/XenomorphSk</a>
   </div>
@@ -514,42 +518,42 @@ footer{
 
 <section id="about" class="reveal">
   <span class="eyebrow">Log_0001</span>
-  <h2 class="title">Sobre a frequência</h2>
-  <p class="lede">Duas linhas que, na prática, são a mesma pergunta: como um sistema falha — quando o sistema é uma API corporativa, e quando o sistema é a própria realidade física.</p>
+  <h2 class="title" data-i18n="about_title">Sobre a frequência</h2>
+  <p class="lede" data-i18n="about_lede">Duas linhas que, na prática, são a mesma pergunta: como um sistema falha — quando o sistema é uma API corporativa, e quando o sistema é a própria realidade física.</p>
 
   <div class="about-grid">
     <div class="about-text">
-      <p>20 anos, autodidata, baseado em Curitiba (PR). Comecei em <strong>segurança ofensiva</strong> — pentest, bug bounty, descoberta de zero-days e uma menção honrosa do Google — encontrando os pontos onde sistemas em produção quebram a própria lógica de confiança que prometem.</p>
-      <p>O mesmo instinto de "onde isso quebra?" migrou para pesquisa de fronteira: <strong>física quântica</strong>, <strong>machine learning</strong> e <strong>biologia computacional</strong>, sem afiliação institucional, sem atalho de validação. A regra é simples: hipóteses e critérios de falsificação são fixados <em>antes</em> de ver os dados, bugs são documentados, e resultados negativos pesam o mesmo que os positivos.</p>
-      <p>Inspiração declarada: <strong>Mr. Robot</strong>, pela ideia de que todo sistema tem uma falha estrutural esperando ser encontrada — e <strong>Rick and Morty</strong>, pelo "it from bit" informal: a realidade como um multiverso de configurações possíveis, a maioria delas falsificável.</p>
+      <p data-i18n="about_p1">20 anos, autodidata, baseado em Curitiba (PR). Comecei em <strong>segurança ofensiva</strong> — pentest, bug bounty, descoberta de zero-days e uma menção honrosa do Google — encontrando os pontos onde sistemas em produção quebram a própria lógica de confiança que prometem.</p>
+      <p data-i18n="about_p2">O mesmo instinto de "onde isso quebra?" migrou para pesquisa de fronteira: <strong>física quântica</strong>, <strong>machine learning</strong> e <strong>biologia computacional</strong>, sem afiliação institucional, sem atalho de validação. A regra é simples: hipóteses e critérios de falsificação são fixados <em>antes</em> de ver os dados, bugs são documentados, e resultados negativos pesam o mesmo que os positivos.</p>
+      <p data-i18n="about_p3">Inspiração declarada: <strong>Mr. Robot</strong>, pela ideia de que todo sistema tem uma falha estrutural esperando ser encontrada — e <strong>Rick and Morty</strong>, pelo "it from bit" informal: a realidade como um multiverso de configurações possíveis, a maioria delas falsificável.</p>
     </div>
     <div class="dossier">
       <div class="dossier-head"><span>dossier.txt</span><span>[unclassified]</span></div>
-      <div class="row"><span class="k">Base</span><span class="v">Curitiba, PR — BR</span></div>
-      <div class="row"><span class="k">Origem</span><span class="v">Offensive Security</span></div>
-      <div class="row"><span class="k">Foco atual</span><span class="v">Quantum · ML · CompBio</span></div>
-      <div class="row"><span class="k">Afiliação</span><span class="v">Independente</span></div>
-      <div class="row"><span class="k">Metodologia</span><span class="v">Pré-registro / OWASP</span></div>
-      <div class="row"><span class="k">Princípio</span><span class="v">It From Bit (Wheeler)</span></div>
-      <div class="row"><span class="k">Stack</span><span class="v">Kali · Python · Qiskit</span></div>
+      <div class="row"><span class="k" data-i18n="dos_base">Base</span><span class="v">Curitiba, PR — BR</span></div>
+      <div class="row"><span class="k" data-i18n="dos_origem">Origem</span><span class="v">Offensive Security</span></div>
+      <div class="row"><span class="k" data-i18n="dos_foco">Foco atual</span><span class="v">Quantum · ML · CompBio</span></div>
+      <div class="row"><span class="k" data-i18n="dos_afil">Afiliação</span><span class="v" data-i18n="dos_afil_v">Independente</span></div>
+      <div class="row"><span class="k" data-i18n="dos_metod">Metodologia</span><span class="v" data-i18n="dos_metod_v">Pré-registro / OWASP</span></div>
+      <div class="row"><span class="k" data-i18n="dos_princ">Princípio</span><span class="v">It From Bit (Wheeler)</span></div>
+      <div class="row"><span class="k" data-i18n="dos_stack">Stack</span><span class="v">Kali · Python · Qiskit</span></div>
     </div>
   </div>
 </section>
 
 <section id="projects" class="reveal">
   <span class="eyebrow">Log_0002</span>
-  <h2 class="title">Dimensões exploradas</h2>
-  <p class="lede">Cada projeto é um universo com hipóteses pré-registradas e critério de falsificação próprio. Nem todos sobreviveram aos próprios testes — e isso é o ponto.</p>
+  <h2 class="title" data-i18n="proj_title">Dimensões exploradas</h2>
+  <p class="lede" data-i18n="proj_lede">Cada projeto é um universo com hipóteses pré-registradas e critério de falsificação próprio. Nem todos sobreviveram aos próprios testes — e isso é o ponto.</p>
 
   <div class="dim-grid">
 
     <div class="dim-card" id="dim-amrneq">
       <div class="dim-id">DIM // AMR-NEQ</div>
       <h3>AMR-NEQ</h3>
-      <div class="status"><span class="dot"></span> hardware real · IBM Quantum</div>
-      <p>Caracterização de degradação de ruído em processadores NISQ e teste da correspondência holográfica Ryu-Takayanagi em hardware real (ibm_kingston, ibm_marrakesh, ibm_fez).</p>
+      <div class="status"><span class="dot"></span> <span data-i18n="dim_amrneq_status">hardware real · IBM Quantum</span></div>
+      <p data-i18n="dim_amrneq_p">Caracterização de degradação de ruído em processadores NISQ e teste da correspondência holográfica Ryu-Takayanagi em hardware real (ibm_kingston, ibm_marrakesh, ibm_fez).</p>
       <div class="stack"><span>Qiskit</span><span>IBM Quantum</span><span>Holografia</span><span>NISQ</span></div>
-      <div class="findings">
+      <div class="findings" data-i18n="dim_amrneq_find">
         12 testes pré-registrados <em>não</em> atingiram o threshold · 4 teoremas provados analiticamente ·
         árvores superaram cadeias em até <em>53×</em> no estado GHZ, validado em hardware real.
       </div>
@@ -559,10 +563,10 @@ footer{
     <div class="dim-card" id="dim-cytos">
       <div class="dim-id">DIM // CYTOS</div>
       <h3>CYTOS</h3>
-      <div class="status"><span class="dot"></span> preprint + lib pip</div>
-      <p>Estudo comparativo pré-registrado entre Tree Tensor Networks (TTNs) e Graph Neural Networks (GNNs) para modelar a dinâmica de redes regulatórias genéticas.</p>
+      <div class="status"><span class="dot"></span> <span data-i18n="dim_cytos_status">preprint + lib pip</span></div>
+      <p data-i18n="dim_cytos_p">Estudo comparativo pré-registrado entre Tree Tensor Networks (TTNs) e Graph Neural Networks (GNNs) para modelar a dinâmica de redes regulatórias genéticas.</p>
       <div class="stack"><span>TTN</span><span>GNN</span><span>Pré-registro</span><span>Python</span></div>
-      <div class="findings">
+      <div class="findings" data-i18n="dim_cytos_find">
         Hipóteses confirmadas e falsificadas com peso igual · preprint publicado ·
         biblioteca <em>pip-installable</em> · submissão para Emergent Ventures.
       </div>
@@ -572,10 +576,10 @@ footer{
     <div class="dim-card" id="dim-dante">
       <div class="dim-id">DIM // D.A.N.T.E.</div>
       <h3>D.A.N.T.E.</h3>
-      <div class="status"><span class="dot"></span> 100% local · em desenvolvimento</div>
-      <p>Assistente de pesquisa em IA rodando inteiramente local via Ollama (qwen2.5-coder:7b) — arquitetura modular com módulo de falsificação, memória persistente e suporte a pré-registro.</p>
+      <div class="status"><span class="dot"></span> <span data-i18n="dim_dante_status">100% local · em desenvolvimento</span></div>
+      <p data-i18n="dim_dante_p">Assistente de pesquisa em IA rodando inteiramente local via Ollama (qwen2.5-coder:7b) — arquitetura modular com módulo de falsificação, memória persistente e suporte a pré-registro.</p>
       <div class="stack"><span>Ollama</span><span>qwen2.5-coder</span><span>Agentes</span><span>Local-first</span></div>
-      <div class="findings">
+      <div class="findings" data-i18n="dim_dante_find">
         Bug aberto no loop do agente: argumentos malformados em <em>criterios_json</em> —
         próxima dimensão a depurar.
       </div>
@@ -584,13 +588,27 @@ footer{
     <div class="dim-card" id="dim-maniac">
       <div class="dim-id">DIM // M.A.N.I.A.C.</div>
       <h3>M.A.N.I.A.C.</h3>
-      <div class="status"><span class="dot"></span> segundo cérebro pessoal</div>
-      <p>Grafo de conhecimento pessoal (FastAPI + Supabase/pgvector + Gemini API + D3.js) conectando conceitos entre física, matemática, hacking e biologia.</p>
+      <div class="status"><span class="dot"></span> <span data-i18n="dim_maniac_status">segundo cérebro pessoal</span></div>
+      <p data-i18n="dim_maniac_p">Grafo de conhecimento pessoal (FastAPI + Supabase/pgvector + Gemini API + D3.js) conectando conceitos entre física, matemática, hacking e biologia.</p>
       <div class="stack"><span>FastAPI</span><span>pgvector</span><span>D3.js</span><span>Gemini API</span></div>
-      <div class="findings">
+      <div class="findings" data-i18n="dim_maniac_find">
         Rastreamento de status epistêmico · checagem adversarial de hipóteses ·
         detecção de pontes entre domínios · entrada por voz, tudo em português.
       </div>
+    </div>
+
+    <div class="dim-card" id="dim-emperor">
+      <div class="dim-id">DIM // EMPEROR</div>
+      <h3>EMPEROR</h3>
+      <div class="status"><span class="dot"></span> <span data-i18n="dim_emperor_status">código aberto · MIT license</span></div>
+      <p data-i18n="dim_emperor_p">Motor de correlação forense para atribuição de ameaças — funde blockchain, infraestrutura e estilometria de código num único grafo com pontuação bayesiana.</p>
+      <div class="stack"><span>Python</span><span>Bayesian</span><span>SQLite</span><span>GraphML</span></div>
+      <div class="findings" data-i18n="dim_emperor_find">
+        Correlator de campanha detectou o padrão de compra em lote "n046" · resultado nulo
+        honesto no geo enrichment · Delta de Burrows achou par estilisticamente idêntico
+        em chat de negociação real.
+      </div>
+      <a class="link" href="emperor.html" data-transition="Carregando EMPEROR">ver projeto completo →</a>
     </div>
 
   </div>
@@ -598,10 +616,10 @@ footer{
 
 <section id="security" class="reveal">
   <span class="eyebrow">Log_0003</span>
-  <h2 class="title">Red Team & AppSec</h2>
-  <p class="lede">De onde tudo começou: encontrar a falha que o sistema não sabia que tinha. Especialista em falhas de autenticação, controle de acesso e configuração de APIs corporativas.</p>
+  <h2 class="title" data-i18n="sec_title">Red Team & AppSec</h2>
+  <p class="lede" data-i18n="sec_lede">De onde tudo começou: encontrar a falha que o sistema não sabia que tinha. Especialista em falhas de autenticação, controle de acesso e configuração de APIs corporativas.</p>
 
-  <div class="sec-banner">
+  <div class="sec-banner" data-i18n="sec_banner">
     [!] casos abaixo anonimizados — instituições financeiras, plataformas educacionais e e-commerces de grande porte. PoCs e disclosure responsible, sempre.
   </div>
 
@@ -611,20 +629,20 @@ footer{
 
   <div class="case-list">
     <div class="case">
-      <span class="sev high">CRÍTICO</span>
-      <div><h4>2FA Bypass — autenticação corporativa</h4><p>Falha no fluxo de segundo fator permitindo contorno completo da verificação em sistema de autenticação corporativo.</p></div>
+      <span class="sev high" data-i18n="sev_high">CRÍTICO</span>
+      <div><h4 data-i18n="case1_h">2FA Bypass — autenticação corporativa</h4><p data-i18n="case1_p">Falha no fluxo de segundo fator permitindo contorno completo da verificação em sistema de autenticação corporativo.</p></div>
     </div>
     <div class="case">
-      <span class="sev high">CRÍTICO</span>
-      <div><h4>IDOR + vazamento de JWT — plataforma educacional</h4><p>Quebra de controle de acesso (IDOR/BOLA) expondo tokens JWT de outros usuários em plataforma de ensino.</p></div>
+      <span class="sev high" data-i18n="sev_high2">CRÍTICO</span>
+      <div><h4 data-i18n="case2_h">IDOR + vazamento de JWT — plataforma educacional</h4><p data-i18n="case2_p">Quebra de controle de acesso (IDOR/BOLA) expondo tokens JWT de outros usuários em plataforma de ensino.</p></div>
     </div>
     <div class="case">
-      <span class="sev med">MÉDIO</span>
-      <div><h4>CORS Misconfiguration — API bancária</h4><p>Configuração inadequada de CORS expondo estrutura interna de API de instituição financeira.</p></div>
+      <span class="sev med" data-i18n="sev_med">MÉDIO</span>
+      <div><h4 data-i18n="case3_h">CORS Misconfiguration — API bancária</h4><p data-i18n="case3_p">Configuração inadequada de CORS expondo estrutura interna de API de instituição financeira.</p></div>
     </div>
     <div class="case">
-      <span class="sev high">CRÍTICO</span>
-      <div><h4>Path Traversal — exposição de endpoints internos</h4><p>Travessia de diretório permitindo acesso a endpoints e recursos internos não destinados ao público.</p></div>
+      <span class="sev high" data-i18n="sev_high3">CRÍTICO</span>
+      <div><h4 data-i18n="case4_h">Path Traversal — exposição de endpoints internos</h4><p data-i18n="case4_p">Travessia de diretório permitindo acesso a endpoints e recursos internos não destinados ao público.</p></div>
     </div>
   </div>
 
@@ -636,7 +654,7 @@ footer{
   </div>
 
   <div style="margin-top:40px;">
-    <a class="btn primary" href="casefile.html" data-transition="Acessando case files">
+    <a class="btn primary" href="casefile.html" data-transition="Acessando case files" data-i18n="sec_casefiles_btn">
       ver case files completos — BUG · HUNTING →
     </a>
   </div>
@@ -646,28 +664,28 @@ footer{
   <span class="eyebrow" style="justify-content:center;">Log_∞ // transmissões interceptadas</span>
   <div class="tx-list" style="margin-top:46px;">
     <div class="tx">
-      <div class="tx-id">tx_01 :: mudança de alvo</div>
-      <blockquote>
+      <div class="tx-id" data-i18n="tx1_id">tx_01 :: mudança de alvo</div>
+      <blockquote data-i18n="tx1_quote">
         Antes eu hackeava sistemas... isso não me contenta mais —
         <span class="hl">agora preciso hackear a realidade.</span>
       </blockquote>
-      <cite>— nota pessoal</cite>
+      <cite data-i18n="tx_cite">— nota pessoal</cite>
     </div>
     <div class="tx">
-      <div class="tx-id">tx_02 :: it from bit</div>
-      <blockquote>
+      <div class="tx-id" data-i18n="tx2_id">tx_02 :: it from bit</div>
+      <blockquote data-i18n="tx2_quote">
         O universo não é o palco onde a informação atua;
         <span class="hl">a informação é o material de construção do palco.</span>
       </blockquote>
-      <cite>— nota pessoal</cite>
+      <cite data-i18n="tx_cite2">— nota pessoal</cite>
     </div>
   </div>
 </section>
 
 <section id="contact" class="reveal">
   <span class="eyebrow">Log_0004</span>
-  <h2 class="title">Abrir um portal</h2>
-  <p class="lede" style="margin:0 auto;">Em busca de oportunidades em Red Team, AppSec, Vulnerability Research — ou de quem queira discutir os teoremas, os bugs e os resultados negativos.</p>
+  <h2 class="title" data-i18n="contact_title">Abrir um portal</h2>
+  <p class="lede" style="margin:0 auto;" data-i18n="contact_lede">Em busca de oportunidades em Red Team, AppSec, Vulnerability Research — ou de quem queira discutir os teoremas, os bugs e os resultados negativos.</p>
   <div class="contact-row">
     <a class="btn primary" href="https://www.linkedin.com/in/gabriel-skura-ribeiro-701a91254/" target="_blank" rel="noopener">LinkedIn →</a>
     <a class="btn" href="https://github.com/XenomorphSk" target="_blank" rel="noopener">GitHub →</a>
@@ -680,7 +698,7 @@ footer{
 <footer>
   <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
   <span id="visitCounter">Dimensão C-137 · visita nº ····</span>
-  <span>build: independente · sem afiliação institucional · C-137</span>
+  <span data-i18n="footer_build">build: independente · sem afiliação institucional · C-137</span>
 </footer>
 
 <script>
@@ -1247,6 +1265,7 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
     { label:'Case Files — BUG',       file:'casefile.html',   hash:'#bug' },
     { label:'Case Files — HUNTING',   file:'casefile.html',   hash:'#hunting' },
+    { label:'EMPEROR',                file:'emperor.html',    hash:'' },
   ];
 
   function currentFile(){
@@ -1321,7 +1340,13 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     const KEY = 'xsk_visit_count';
     const n = (parseInt(localStorage.getItem(KEY) || '0', 10) || 0) + 1;
     localStorage.setItem(KEY, String(n));
-    el.textContent = 'Dimensão C-137 · visita nº ' + String(n).padStart(4,'0');
+    let stored = null;
+    try{ stored = localStorage.getItem('xsk_lang'); }catch(e){}
+    const lang = (stored === 'en' || stored === 'pt')
+      ? stored
+      : ((navigator.language||'en').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en');
+    const label = lang === 'en' ? 'Dimension C-137 · visit nº ' : 'Dimensão C-137 · visita nº ';
+    el.textContent = label + String(n).padStart(4,'0');
   }catch(e){ /* localStorage indisponível — mantém texto padrão */ }
 })();
 
@@ -1339,6 +1364,85 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   }
 })();
 </script>
+
+<script>
+window.I18N_EN = {
+  nav_about: "about",
+  nav_projects: "dimensions",
+  nav_security: "redteam",
+  nav_contact: "contact",
+  jump: "random dimension",
+
+  hero_sub: "Independent researcher navigating between dimensions: from critical bugs in production to holographic correspondences on real quantum hardware. No institution, no shortcut — just hypothesis, testing, and whatever survives after trying to break your own idea.",
+  hero_btn_projects: "see the dimensions →",
+
+  about_title: "About the frequency",
+  about_lede: "Two lines that are, in practice, the same question: how does a system fail — when the system is a corporate API, and when the system is physical reality itself.",
+  about_p1: "20 years old, self-taught, based in Curitiba (PR), Brazil. Started in <strong>offensive security</strong> — pentesting, bug bounty, zero-day discovery, and a Google honorable mention — finding the points where production systems break the very trust logic they promise.",
+  about_p2: "The same \"where does this break?\" instinct migrated into frontier research: <strong>quantum physics</strong>, <strong>machine learning</strong>, and <strong>computational biology</strong>, with no institutional affiliation, no validation shortcut. The rule is simple: hypotheses and falsification criteria are fixed <em>before</em> seeing the data, bugs are documented, and negative results carry the same weight as positive ones.",
+  about_p3: "Declared inspiration: <strong>Mr. Robot</strong>, for the idea that every system has a structural flaw waiting to be found — and <strong>Rick and Morty</strong>, for the informal \"it from bit\": reality as a multiverse of possible configurations, most of them falsifiable.",
+  dos_base: "Base",
+  dos_origem: "Origin",
+  dos_foco: "Current focus",
+  dos_afil: "Affiliation",
+  dos_afil_v: "Independent",
+  dos_metod: "Methodology",
+  dos_metod_v: "Pre-registration / OWASP",
+  dos_princ: "Principle",
+  dos_stack: "Stack",
+
+  proj_title: "Dimensions explored",
+  proj_lede: "Each project is a universe with pre-registered hypotheses and its own falsification criteria. Not all of them survived their own tests — and that's the point.",
+
+  dim_amrneq_status: "real hardware · IBM Quantum",
+  dim_amrneq_p: "Noise-degradation characterization on NISQ processors and testing of the Ryu-Takayanagi holographic correspondence on real hardware (ibm_kingston, ibm_marrakesh, ibm_fez).",
+  dim_amrneq_find: "12 pre-registered tests <em>didn't</em> hit the threshold · 4 theorems proven analytically · trees outperformed chains by up to <em>53×</em> on the GHZ state, validated on real hardware.",
+
+  dim_cytos_status: "preprint + pip library",
+  dim_cytos_p: "Pre-registered comparative study between Tree Tensor Networks (TTNs) and Graph Neural Networks (GNNs) for modeling gene regulatory network dynamics.",
+  dim_cytos_find: "Hypotheses confirmed and falsified with equal weight · preprint published · <em>pip-installable</em> library · submitted to Emergent Ventures.",
+
+  dim_dante_status: "100% local · in development",
+  dim_dante_p: "AI research assistant running entirely locally via Ollama (qwen2.5-coder:7b) — modular architecture with a falsification module, persistent memory, and pre-registration support.",
+  dim_dante_find: "Open bug in the agent loop: malformed arguments in <em>criterios_json</em> — next dimension to debug.",
+
+  dim_maniac_status: "personal second brain",
+  dim_maniac_p: "Personal knowledge graph (FastAPI + Supabase/pgvector + Gemini API + D3.js) connecting concepts across physics, math, hacking, and biology.",
+  dim_maniac_find: "Epistemic-status tracking · adversarial hypothesis checking · cross-domain bridge detection · voice input, all in Portuguese.",
+
+  dim_emperor_status: "open source · MIT license",
+  dim_emperor_p: "Forensic correlation engine for threat attribution — fuses blockchain, infrastructure, and code stylometry into a single graph with Bayesian scoring.",
+  dim_emperor_find: "Campaign correlator detected the \"n046\" batch-purchase pattern · honest null result on geo enrichment · Burrows' Delta found a stylistically near-identical pair in real negotiation chat.",
+
+  sec_title: "Red Team & AppSec",
+  sec_lede: "Where it all started: finding the flaw the system didn't know it had. Specialized in authentication flaws, access control breaks, and corporate API misconfigurations.",
+  sec_banner: "[!] cases below are anonymized — large financial institutions, educational platforms, and e-commerces. PoCs and responsible disclosure, always.",
+
+  sev_high: "CRITICAL", sev_high2: "CRITICAL", sev_high3: "CRITICAL", sev_med: "MEDIUM",
+  case1_h: "2FA Bypass — corporate authentication",
+  case1_p: "Flaw in the second-factor flow allowing full bypass of verification in a corporate authentication system.",
+  case2_h: "IDOR + JWT leak — educational platform",
+  case2_p: "Broken access control (IDOR/BOLA) exposing other users' JWT tokens on a teaching platform.",
+  case3_h: "CORS Misconfiguration — banking API",
+  case3_p: "Inadequate CORS configuration exposing internal API structure of a financial institution.",
+  case4_h: "Path Traversal — internal endpoint exposure",
+  case4_p: "Directory traversal allowing access to internal endpoints and resources not meant for the public.",
+  sec_casefiles_btn: "see full case files — BUG · HUNTING →",
+
+  tx1_id: "tx_01 :: change of target",
+  tx1_quote: "I used to hack systems... that doesn't satisfy me anymore — <span class=\"hl\">now I need to hack reality.</span>",
+  tx_cite: "— personal note",
+  tx2_id: "tx_02 :: it from bit",
+  tx2_quote: "The universe isn't the stage on which information acts; <span class=\"hl\">information is the building material of the stage.</span>",
+  tx_cite2: "— personal note",
+
+  contact_title: "Open a portal",
+  contact_lede: "Looking for opportunities in Red Team, AppSec, Vulnerability Research — or anyone who wants to discuss the theorems, the bugs, and the negative results.",
+
+  footer_build: "build: independent · no institutional affiliation · C-137",
+};
+</script>
+<script src="i18n.js"></script>
 
 </body>
 </html>

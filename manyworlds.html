@@ -55,13 +55,13 @@ nav a:hover{ color:var(--portal-1); }
 nav a.back::before{ content:'← '; }
 
 /* ---------- jump button ---------- */
-.jump-btn{
+.jump-btn, .lang-btn{
   font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
   background:transparent; border:1px solid var(--line); color:var(--ink-dim);
   padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
   transition:border-color .2s, color .2s;
 }
-.jump-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-btn:hover, .lang-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
 .jump-icon{ display:inline-block; transition:transform .3s ease; }
 .jump-btn:hover .jump-icon{ transform:rotate(90deg); }
 @media (max-width:620px){ .jump-txt{ display:none; } .jump-btn{ padding:8px 11px; } }
@@ -233,12 +233,13 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 <header>
   <div class="brand"><span class="ring"></span> XenomorphSk</div>
   <nav>
-    <a class="back" href="index.html" data-transition="Voltando ao portal">portfolio</a>
-    <a href="#simulator">simulador</a>
-    <a href="#results">resultados</a>
+    <a class="back" href="index.html" data-transition="Voltando ao portal" data-i18n="nav_back">portfolio</a>
+    <a href="#simulator" data-i18n="nav_sim">simulador</a>
+    <a href="#results" data-i18n="nav_results">resultados</a>
   </nav>
+  <button class="lang-btn" id="langBtn" title="mudar idioma">PT ⇄ EN</button>
   <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
-    <span class="jump-icon">⤳</span><span class="jump-txt">dimensão aleatória</span>
+    <span class="jump-icon">⤳</span><span class="jump-txt" data-i18n="jump">dimensão aleatória</span>
   </button>
 </header>
 
@@ -248,7 +249,7 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 <section id="hero">
   <span class="hero-eyebrow"><span class="blip">●</span> dimensão // AMR-NEQ + ITFROMBIT + MANYWORLDS</span>
   <h1>It From Bit /<br><span class="hl">Many Worlds</span></h1>
-  <p class="hero-sub">
+  <p class="hero-sub" data-i18n="hero_sub">
     Uma pergunta simples testada em hardware quântico real: quando dois sistemas guardam
     informação de forma <em>holográfica</em> — redundante, espalhada, à prova de perda parcial —
     eles resistem melhor ao ruído do que uma codificação genérica? A resposta experimental,
@@ -256,12 +257,12 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
   </p>
   <div class="hero-tags">
     <span class="tag">IBM Quantum · Heron r2</span>
-    <span class="tag">códigos holográficos</span>
-    <span class="tag">pré-registrado</span>
-    <span class="tag">hardware real, não só simulação</span>
+    <span class="tag" data-i18n="tag_holo">códigos holográficos</span>
+    <span class="tag" data-i18n="tag_prereg">pré-registrado</span>
+    <span class="tag" data-i18n="tag_real">hardware real, não só simulação</span>
   </div>
 
-  <div class="disclosure">
+  <div class="disclosure" data-i18n="disclosure">
     <strong>[!] nota de disclosure</strong> — esta página resume a pergunta, o protocolo em alto
     nível e os resultados já destinados a publicação (preprint no Zenodo, artigo em preparação
     para arXiv). Detalhes de implementação — construção exata do encoder, arquitetura do
@@ -272,29 +273,29 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
 <!-- EXPLAINER -->
 <section id="explainer" class="reveal">
-  <span class="eyebrow">O experimento, em 3 passos</span>
-  <h2 class="title">O que foi testado</h2>
-  <p class="lede">Sem entrar em como o encoder foi construído — só o que ele faz e por quê.</p>
+  <span class="eyebrow" data-i18n="exp_eyebrow">O experimento, em 3 passos</span>
+  <h2 class="title" data-i18n="exp_title">O que foi testado</h2>
+  <p class="lede" data-i18n="exp_lede">Sem entrar em como o encoder foi construído — só o que ele faz e por quê.</p>
 
   <div class="explain-grid">
     <div class="explain-card">
       <div class="n">01</div>
-      <h3>Dois sistemas, um par emaranhado</h3>
-      <p>Dois blocos de 5 qubits são preparados num par de Bell lógico — cada bloco carrega
+      <h3 data-i18n="exp1_h">Dois sistemas, um par emaranhado</h3>
+      <p data-i18n="exp1_p">Dois blocos de 5 qubits são preparados num par de Bell lógico — cada bloco carrega
       um qubit de informação "espalhado" de forma redundante entre os outros quatro, usando
       um código quântico perfeito conhecido na literatura.</p>
     </div>
     <div class="explain-card">
       <div class="n">02</div>
-      <h3>Ruído independente em cada lado</h3>
-      <p>Cada sistema recebe ruído físico independente — erros aleatórios de Pauli aplicados
+      <h3 data-i18n="exp2_h">Ruído independente em cada lado</h3>
+      <p data-i18n="exp2_p">Cada sistema recebe ruído físico independente — erros aleatórios de Pauli aplicados
       diretamente no hardware da IBM — simulando o tipo de decoerência que qualquer QPU
       real sofre o tempo todo.</p>
     </div>
     <div class="explain-card">
       <div class="n">03</div>
-      <h3>Mede-se o que sobrou da correlação</h3>
-      <p>Comparamos a correlação lógica remanescente entre os dois sistemas contra um
+      <h3 data-i18n="exp3_h">Mede-se o que sobrou da correlação</h3>
+      <p data-i18n="exp3_p">Comparamos a correlação lógica remanescente entre os dois sistemas contra um
       grupo de controle — encoders aleatórios sem estrutura holográfica — no mesmo hardware,
       sob o mesmo ruído.</p>
     </div>
@@ -303,9 +304,9 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
 <!-- SIMULATOR -->
 <section id="simulator" class="reveal">
-  <span class="eyebrow">Relógio de ruído</span>
-  <h2 class="title">Simulador — amplitude sob ruído crescente</h2>
-  <p class="lede">
+  <span class="eyebrow" data-i18n="sim_eyebrow">Relógio de ruído</span>
+  <h2 class="title" data-i18n="sim_title">Simulador — amplitude sob ruído crescente</h2>
+  <p class="lede" data-i18n="sim_lede">
     Cada perna do relógio é um nível de ruído testado no experimento real (0 a 8 gates de Pauli
     por sistema). O comprimento e o brilho da perna mostram a amplitude de correlação |ZZ|
     medida em hardware — arraste o controle para "avançar o relógio" e comparar o canal
@@ -317,20 +318,20 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
       <canvas id="clockCanvas" width="460" height="460"></canvas>
     </div>
     <div class="sim-panel">
-      <h4>Painel de leitura</h4>
+      <h4 data-i18n="sim_panel_h">Painel de leitura</h4>
       <div class="slider-row">
-        <label>Nível de ruído (n_noise) <span id="noiseVal">0</span> / 8 gates de Pauli</label>
+        <label data-i18n="sim_slider_label">Nível de ruído (n_noise) <span id="noiseVal">0</span> / 8 gates de Pauli</label>
         <input type="range" id="noiseSlider" min="0" max="8" step="1" value="0">
       </div>
       <div class="legend">
-        <span><span class="dot holo"></span>holográfico [[5,1,3]]</span>
-        <span><span class="dot rand"></span>encoder aleatório</span>
+        <span><span class="dot holo"></span><span data-i18n="sim_legend_holo">holográfico [[5,1,3]]</span></span>
+        <span><span class="dot rand"></span><span data-i18n="sim_legend_rand">encoder aleatório</span></span>
       </div>
       <div class="readout">
-        <div class="row"><span class="k">|ZZ| holográfico</span><span class="v holo" id="readHolo">0.711</span></div>
-        <div class="row"><span class="k">|ZZ| aleatório</span><span class="v rand" id="readRand">0.006</span></div>
-        <div class="row"><span class="k">razão holo / rand</span><span class="v" id="readRatio">118×</span></div>
-        <div class="row"><span class="k">sinal ZZ_holo</span><span class="v" id="readSign">positivo</span></div>
+        <div class="row"><span class="k" data-i18n="sim_k_holo">|ZZ| holográfico</span><span class="v holo" id="readHolo">0.711</span></div>
+        <div class="row"><span class="k" data-i18n="sim_k_rand">|ZZ| aleatório</span><span class="v rand" id="readRand">0.006</span></div>
+        <div class="row"><span class="k" data-i18n="sim_k_ratio">razão holo / rand</span><span class="v" id="readRatio">118×</span></div>
+        <div class="row"><span class="k" data-i18n="sim_k_sign">sinal ZZ_holo</span><span class="v" id="readSign">positivo</span></div>
       </div>
       <p class="sim-note" id="signNote">
         Sem ruído, o canal holográfico e o aleatório partem do mesmo lugar — mas só um deles
@@ -339,7 +340,7 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
     </div>
   </div>
 
-  <p class="sim-note" style="max-width:900px;">
+  <p class="sim-note" style="max-width:900px;" data-i18n="sim_note_bottom">
     Os números vêm direto do experimento em hardware real (ibm_fez, 5000 disparos por
     ponto). Quando o ponteiro holográfico "inverte" o sinal em alguns níveis, não é o sinal sendo
     destruído — é uma troca de fase coerente prevista pela estrutura do código, e a amplitude
@@ -349,33 +350,33 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
 <!-- RESULTS -->
 <section id="results" class="reveal">
-  <span class="eyebrow">Confirmado em hardware</span>
-  <h2 class="title">O resultado central</h2>
-  <p class="lede">Três validações independentes, três hardwares reais da IBM Quantum.</p>
+  <span class="eyebrow" data-i18n="res_eyebrow">Confirmado em hardware</span>
+  <h2 class="title" data-i18n="res_title">O resultado central</h2>
+  <p class="lede" data-i18n="res_lede">Três validações independentes, três hardwares reais da IBM Quantum.</p>
 
   <div class="res-table">
-    <div class="res-row head"><span>Experimento</span><span>Resultado</span><span>p-valor</span></div>
-    <div class="res-row"><span class="v">Handshake nativo — ibm_kingston (3 níveis)</span><span class="v">Δ médio +0.47</span><span class="p">0.0265</span></div>
-    <div class="res-row"><span class="v">Curva de capacidade — ibm_fez (9 níveis)</span><span class="v">8.3× amplitude</span><span class="p">≈0</span></div>
-    <div class="res-row"><span class="v">Ruído em todos os qubits — ibm_fez</span><span class="v">7.6× amplitude</span><span class="p">≈0</span></div>
+    <div class="res-row head"><span data-i18n="res_h1">Experimento</span><span data-i18n="res_h2">Resultado</span><span>p-valor</span></div>
+    <div class="res-row"><span class="v" data-i18n="res_r1">Handshake nativo — ibm_kingston (3 níveis)</span><span class="v" data-i18n="res_r1v">Δ médio +0.47</span><span class="p">0.0265</span></div>
+    <div class="res-row"><span class="v" data-i18n="res_r2">Curva de capacidade — ibm_fez (9 níveis)</span><span class="v">8.3× amplitude</span><span class="p">≈0</span></div>
+    <div class="res-row"><span class="v" data-i18n="res_r3">Ruído em todos os qubits — ibm_fez</span><span class="v">7.6× amplitude</span><span class="p">≈0</span></div>
   </div>
 
   <div class="interp">
     <div class="interp-col">
-      <h4>O que já sabemos</h4>
-      <p>A estrutura holográfica protege correlações lógicas em hardware supercondutor real —
+      <h4 data-i18n="interp1_h">O que já sabemos</h4>
+      <p data-i18n="interp1_p1">A estrutura holográfica protege correlações lógicas em hardware supercondutor real —
       não só em simulação. O efeito é consistente em três backends diferentes e cresce com o
       ruído, não decai com ele.</p>
-      <p>Isso é evidência de código de correção de erros funcionando como esperado pela
+      <p data-i18n="interp1_p2">Isso é evidência de código de correção de erros funcionando como esperado pela
       teoria — o que já é, sozinho, um resultado experimental interessante para um pesquisador
       sem afiliação institucional rodando num plano gratuito de QPU.</p>
     </div>
     <div class="interp-col">
-      <h4>O que continua em aberto</h4>
-      <p>Se essa proteção é "apenas" correção de erro padrão, ou se existe uma assinatura mais
+      <h4 data-i18n="interp2_h">O que continua em aberto</h4>
+      <p data-i18n="interp2_p1">Se essa proteção é "apenas" correção de erro padrão, ou se existe uma assinatura mais
       profunda — algo que se pareça com um canal de informação entre os dois sistemas, além
       da simples preservação de um bit local — é a pergunta que define o próximo experimento.</p>
-      <p>Esse próximo passo exige múltiplos qubits lógicos e um protocolo de modulação: um
+      <p data-i18n="interp2_p2">Esse próximo passo exige múltiplos qubits lógicos e um protocolo de modulação: um
       lado "escreve", o outro "lê" sem canal clássico adicional. Ainda não foi testado.</p>
     </div>
   </div>
@@ -383,21 +384,21 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
 <!-- QUOTE -->
 <section id="quote" class="reveal">
-  <blockquote>"A antena funciona. O que ela pode receber ainda é desconhecido."</blockquote>
-  <cite>— conclusão de trabalho, MANYWORLDS v1</cite>
+  <blockquote data-i18n="quote_text">"A antena funciona. O que ela pode receber ainda é desconhecido."</blockquote>
+  <cite data-i18n="quote_cite">— conclusão de trabalho, MANYWORLDS v1</cite>
 </section>
 
 <!-- NEXT -->
 <section id="next" class="reveal">
-  <span class="eyebrow">Continuação</span>
-  <h2 class="title">Preprint e próximos passos</h2>
-  <p class="lede" style="margin:0 auto;">
+  <span class="eyebrow" data-i18n="next_eyebrow">Continuação</span>
+  <h2 class="title" data-i18n="next_title">Preprint e próximos passos</h2>
+  <p class="lede" style="margin:0 auto;" data-i18n="next_lede">
     O preprint que originou este projeto (ITFROMBIT) já está publicado. O artigo do MANYWORLDS
     está em preparação para o arXiv.
   </p>
   <div class="contact-row">
     <a class="btn primary" href="https://doi.org/10.5281/zenodo.21068699" target="_blank" rel="noopener">Preprint ITFROMBIT (Zenodo) →</a>
-    <a class="btn" href="index.html#projects" data-transition="Voltando ao portal">Voltar às dimensões</a>
+    <a class="btn" href="index.html#projects" data-transition="Voltando ao portal" data-i18n="next_back">Voltar às dimensões</a>
   </div>
 </section>
 
@@ -707,6 +708,7 @@ loop();
     { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
     { label:'Case Files — BUG',       file:'casefile.html',   hash:'#bug' },
     { label:'Case Files — HUNTING',   file:'casefile.html',   hash:'#hunting' },
+    { label:'EMPEROR',                file:'emperor.html',    hash:'' },
   ];
 
   function currentFile(){
@@ -732,6 +734,68 @@ loop();
   });
 })();
 </script>
+
+<script>
+window.I18N_EN = {
+  nav_back: "portfolio",
+  nav_sim: "simulator",
+  nav_results: "results",
+  jump: "random dimension",
+
+  hero_sub: "A simple question tested on real quantum hardware: when two systems store information <em>holographically</em> — redundant, spread out, resistant to partial loss — do they resist noise better than a generic encoding? The experimental answer, measured on IBM superconducting processors, is yes.",
+  tag_holo: "holographic codes",
+  tag_prereg: "pre-registered",
+  tag_real: "real hardware, not just simulation",
+  disclosure: "<strong>[!] disclosure note</strong> — this page summarizes the question, the high-level protocol, and the results already destined for publication (Zenodo preprint, arXiv article in preparation). Implementation details — the exact encoder construction, the variational ansatz architecture, and the cost function — are left out on purpose. It's not about hiding the result; it's about not distributing the method before the right time.",
+
+  exp_eyebrow: "The experiment, in 3 steps",
+  exp_title: "What was tested",
+  exp_lede: "Without going into how the encoder was built — just what it does and why.",
+  exp1_h: "Two systems, one entangled pair",
+  exp1_p: "Two 5-qubit blocks are prepared in a logical Bell pair — each block carries one qubit of information \"spread\" redundantly across the other four, using a perfect quantum code known in the literature.",
+  exp2_h: "Independent noise on each side",
+  exp2_p: "Each system receives independent physical noise — random Pauli errors applied directly on IBM hardware — simulating the kind of decoherence any real QPU suffers all the time.",
+  exp3_h: "Measuring what's left of the correlation",
+  exp3_p: "We compare the remaining logical correlation between the two systems against a control group — random encoders with no holographic structure — on the same hardware, under the same noise.",
+
+  sim_eyebrow: "Noise clock",
+  sim_title: "Simulator — amplitude under growing noise",
+  sim_lede: "Each leg of the clock is a noise level tested in the real experiment (0 to 8 Pauli gates per system). The leg's length and glow show the |ZZ| correlation amplitude measured on hardware — drag the control to \"advance the clock\" and compare the holographic channel against the random one.",
+  sim_panel_h: "Readout panel",
+  sim_slider_label: "Noise level (n_noise) <span id=\"noiseVal\">0</span> / 8 Pauli gates",
+  sim_legend_holo: "holographic [[5,1,3]]",
+  sim_legend_rand: "random encoder",
+  sim_k_holo: "|ZZ| holographic",
+  sim_k_rand: "|ZZ| random",
+  sim_k_ratio: "holo / rand ratio",
+  sim_k_sign: "ZZ_holo sign",
+  sim_note_bottom: "The numbers come straight from the real-hardware experiment (ibm_fez, 5000 shots per point). When the holographic pointer \"flips\" sign at some levels, the signal isn't being destroyed — it's a coherent phase swap predicted by the code's structure, and the amplitude (what the clock shows) stays stable.",
+
+  res_eyebrow: "Confirmed on hardware",
+  res_title: "The central result",
+  res_lede: "Three independent validations, three real IBM Quantum hardware backends.",
+  res_h1: "Experiment", res_h2: "Result",
+  res_r1: "Native handshake — ibm_kingston (3 levels)", res_r1v: "mean Δ +0.47",
+  res_r2: "Capacity curve — ibm_fez (9 levels)",
+  res_r3: "Noise across all qubits — ibm_fez",
+
+  interp1_h: "What we already know",
+  interp1_p1: "Holographic structure protects logical correlations on real superconducting hardware — not just in simulation. The effect is consistent across three different backends and grows with noise, rather than decaying.",
+  interp1_p2: "This is evidence of an error-correcting code working as theory predicts — which is, on its own, an interesting experimental result for a researcher with no institutional affiliation running on a free QPU plan.",
+  interp2_h: "What remains open",
+  interp2_p1: "Whether this protection is \"just\" standard error correction, or whether there's a deeper signature — something resembling an information channel between the two systems, beyond simple preservation of a local bit — is the question that defines the next experiment.",
+  interp2_p2: "That next step requires multiple logical qubits and a modulation protocol: one side \"writes\", the other \"reads\" with no additional classical channel. Not tested yet.",
+
+  quote_text: "\"The antenna works. What it can receive is still unknown.\"",
+  quote_cite: "— working conclusion, MANYWORLDS v1",
+
+  next_eyebrow: "Continuation",
+  next_title: "Preprint and next steps",
+  next_lede: "The preprint that originated this project (ITFROMBIT) is already published. The MANYWORLDS article is in preparation for arXiv.",
+  next_back: "Back to the dimensions",
+};
+</script>
+<script src="i18n.js"></script>
 
 </body>
 </html>

@@ -55,13 +55,13 @@ nav{ display:flex; gap:26px; }
 nav a{ color:var(--ink-dim); position:relative; padding:4px 0; transition:color .2s; }
 nav a:hover{ color:var(--portal-1); }
 nav a.back::before{ content:'← '; }
-.jump-btn{
+.jump-btn, .lang-btn{
   font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
   background:transparent; border:1px solid var(--line); color:var(--ink-dim);
   padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
   transition:border-color .2s, color .2s;
 }
-.jump-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-btn:hover, .lang-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
 .jump-icon{ display:inline-block; transition:transform .3s ease; }
 .jump-btn:hover .jump-icon{ transform:rotate(90deg); }
 @media (max-width:760px){ nav{ display:none; } }
@@ -188,6 +188,31 @@ h1 .h{ color:var(--alert); }
 .aff-facts .hl{ color:var(--acid); }
 .aff-facts .hl2{ color:var(--alert); }
 
+/* ---------- card de hipótese de atribuição (IAB) ---------- */
+.iab-card{
+  margin:0; border-top:1px solid var(--line); background:var(--panel); padding:28px 28px 30px;
+}
+.iab-head{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
+.iab-head h4{ font-family:var(--mono); font-size:15px; color:var(--ink); text-transform:uppercase; letter-spacing:-.01em; }
+.iab-badge{
+  font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--acid); border:1px dashed var(--acid); padding:4px 10px;
+}
+.iab-card > p{ color:var(--ink-dim); font-size:13.5px; line-height:1.8; margin-bottom:16px; max-width:820px; }
+.iab-table{ width:100%; border-collapse:collapse; margin-bottom:18px; font-family:var(--pmono); font-size:12px; }
+.iab-table th, .iab-table td{ border:1px solid var(--line); padding:8px 10px; text-align:left; color:var(--ink-dim); }
+.iab-table th{ color:var(--ink); font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; }
+.iab-iocs{
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); background:rgba(0,0,0,.3);
+  padding:14px 16px; border-left:2px solid var(--acid); line-height:1.9; margin-bottom:14px;
+}
+.iab-iocs code{ color:var(--acid); }
+.iab-confidence{
+  font-family:var(--pmono); font-size:12px; color:var(--ink-dim); line-height:1.8;
+  border-left:2px solid var(--alert); padding:12px 16px; background:rgba(255,59,92,.03); max-width:820px;
+}
+.iab-confidence strong{ color:var(--alert); }
+
 .redacted{
   display:inline-block; background:var(--ink); color:var(--ink); border-radius:2px; padding:0 4px;
   cursor:help; transition:background .2s, color .2s; user-select:none;
@@ -291,21 +316,22 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 <header>
   <div class="brand"><span class="ring"></span> XenomorphSk</div>
   <nav>
-    <a class="back" href="index.html" data-transition="Voltando ao portal">portfolio</a>
-    <a href="#bug">bug</a>
-    <a href="#hunting">hunting</a>
+    <a class="back" href="index.html" data-transition="Voltando ao portal" data-i18n="nav_back">portfolio</a>
+    <a href="#bug" data-i18n="nav_bug">bug</a>
+    <a href="#hunting" data-i18n="nav_hunting">hunting</a>
   </nav>
+  <button class="lang-btn" id="langBtn" title="mudar idioma">PT ⇄ EN</button>
   <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
-    <span class="jump-icon">⤳</span><span class="jump-txt">dimensão aleatória</span>
+    <span class="jump-icon">⤳</span><span class="jump-txt" data-i18n="jump">dimensão aleatória</span>
   </button>
 </header>
 
 <main>
 
 <section id="hero">
-  <div class="hero-tag"><span class="blip">●</span> arquivo restrito // nível de acesso: público</div>
+  <div class="hero-tag"><span class="blip">●</span> <span data-i18n="hero_tag">arquivo restrito // nível de acesso: público</span></div>
   <h1>Case Files<br><span class="slash">/</span> <span class="b">BUG</span> <span class="slash">·</span> <span class="h">HUNTING</span></h1>
-  <p class="hero-sub">
+  <p class="hero-sub" data-i18n="hero_sub">
     Duas gavetas do mesmo arquivo. Uma com o que reportei e ganhei crédito por encontrar.
     A outra com o que estou rastreando — não pra explorar, mas pra ajudar a identificar
     quem já explorou os outros.
@@ -313,21 +339,21 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
   <div class="prompt-strip">
     <span class="l"><span class="p">$</span> whoami</span>
-    <span class="l out">XenomorphSk · pesquisador independente · sem afiliação institucional</span>
+    <span class="l out" data-i18n="prompt1">XenomorphSk · pesquisador independente · sem afiliação institucional</span>
     <span class="l"><span class="p">$</span> cat clearance.txt</span>
-    <span class="l out">dados públicos · disclosure responsável · nenhum acesso não autorizado</span>
+    <span class="l out" data-i18n="prompt2">dados públicos · disclosure responsável · nenhum acesso não autorizado</span>
   </div>
 
   <div class="hero-jump">
-    <a href="#bug">↓ ir pra BUG</a>
-    <a href="#hunting" class="hunt">↓ ir pra HUNTING</a>
+    <a href="#bug" data-i18n="jump_bug">↓ ir pra BUG</a>
+    <a href="#hunting" class="hunt" data-i18n="jump_hunt">↓ ir pra HUNTING</a>
   </div>
 </section>
 
 <section id="bug" class="reveal">
-  <span class="eyebrow">Gaveta 01</span>
-  <h2 class="title">BUG — reports & honorable mentions</h2>
-  <p class="lede">
+  <span class="eyebrow" data-i18n="bug_eyebrow">Gaveta 01</span>
+  <h2 class="title" data-i18n="bug_title">BUG — reports & honorable mentions</h2>
+  <p class="lede" data-i18n="bug_lede">
     O que encontrei, reportei e o que os programas fizeram com isso — incluindo os casos em
     que o "prêmio" foi só o crédito.
   </p>
@@ -337,18 +363,18 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
     <div class="bug-card">
       <div class="row1">
         <h3>Skia / Chrome VRP</h3>
-        <span class="bug-badge reward">recompensa estimada</span>
+        <span class="bug-badge reward" data-i18n="bug1_badge">recompensa estimada</span>
       </div>
-      <p>
+      <p data-i18n="bug1_p">
         Bug de type-promotion identificado em <code style="font-family:var(--pmono);color:var(--acid);">SkBmpRLECodec.cpp</code>,
         validado com AddressSanitizer e submetido com relatório completo (Issue 531478064).
         O Google escalou a severidade em minutos: prioridade P4→P3, severidade S4→S3.
       </p>
       <div class="bug-meta">
-        <span>ASan verificado</span>
+        <span data-i18n="bug1_m1">ASan verificado</span>
         <span>P4 → P3</span>
         <span>S4 → S3</span>
-        <span>faixa estimada $2.500–$4.000</span>
+        <span data-i18n="bug1_m2">faixa estimada $2.500–$4.000</span>
       </div>
     </div>
 
@@ -357,48 +383,48 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
         <h3>HarfBuzz — "Repacker Bomb"</h3>
         <span class="bug-badge honorable">honorable mention</span>
       </div>
-      <p>
+      <p data-i18n="bug2_p">
         ~6 semanas de trabalho numa condição de negação de serviço no repacker. Classificado
         como <em style="color:var(--ink);font-style:normal;">availability-only</em> — honorable
         mention, sem recompensa monetária. Foi esse caso que me fez criar um sistema de
         triagem antes de investir em PoC ou relatório.
       </p>
       <div class="bug-meta">
-        <span>~6 semanas</span>
+        <span data-i18n="bug2_m1">~6 semanas</span>
         <span>availability-only</span>
-        <span>sem recompensa</span>
+        <span data-i18n="bug2_m2">sem recompensa</span>
       </div>
     </div>
 
   </div>
 
   <div class="triage-legend">
-    <span class="eyebrow" style="margin-top:0;">O que o HarfBuzz me ensinou</span>
-    <p class="lede">Desde então, toda descoberta é classificada nessas 4 categorias antes de eu investir tempo em prova de conceito:</p>
+    <span class="eyebrow" style="margin-top:0;" data-i18n="triage_eyebrow">O que o HarfBuzz me ensinou</span>
+    <p class="lede" data-i18n="triage_lede">Desde então, toda descoberta é classificada nessas 4 categorias antes de eu investir tempo em prova de conceito:</p>
     <div class="triage-row">
-      <div class="triage-cell"><span class="tag high">MEMORY_SAFETY_HIGH_VALUE</span><p>RCE, corrupção de memória explorável — prioridade máxima de PoC.</p></div>
-      <div class="triage-cell"><span class="tag mod">MEMORY_SAFETY_MODERATE</span><p>Corrupção real, mas de exploração limitada ou incerta.</p></div>
-      <div class="triage-cell"><span class="tag avail">AVAILABILITY_ONLY</span><p>DoS/crash sem via clara de escalada — geralmente honorable mention.</p></div>
-      <div class="triage-cell"><span class="tag review">NEEDS_MANUAL_REVIEW</span><p>Sinal ambíguo — precisa de mais investigação antes de decidir.</p></div>
+      <div class="triage-cell"><span class="tag high">MEMORY_SAFETY_HIGH_VALUE</span><p data-i18n="triage1">RCE, corrupção de memória explorável — prioridade máxima de PoC.</p></div>
+      <div class="triage-cell"><span class="tag mod">MEMORY_SAFETY_MODERATE</span><p data-i18n="triage2">Corrupção real, mas de exploração limitada ou incerta.</p></div>
+      <div class="triage-cell"><span class="tag avail">AVAILABILITY_ONLY</span><p data-i18n="triage3">DoS/crash sem via clara de escalada — geralmente honorable mention.</p></div>
+      <div class="triage-cell"><span class="tag review">NEEDS_MANUAL_REVIEW</span><p data-i18n="triage4">Sinal ambíguo — precisa de mais investigação antes de decidir.</p></div>
     </div>
   </div>
 
-  <span class="eyebrow" style="margin-top:52px;">Outros programas ativos</span>
+  <span class="eyebrow" style="margin-top:52px;" data-i18n="other_progs">Outros programas ativos</span>
   <div class="other-programs">
     <span>dav1d</span><span>QEMU</span><span>strongSwan</span><span>Cloudflare quiche</span><span>Zimbra</span>
   </div>
 </section>
 
 <section id="hunting" class="reveal">
-  <span class="eyebrow red">Gaveta 02</span>
-  <h2 class="title">HUNTING — inteligência de ameaças independente</h2>
-  <p class="lede">
+  <span class="eyebrow red" data-i18n="hunt_eyebrow">Gaveta 02</span>
+  <h2 class="title" data-i18n="hunt_title">HUNTING — inteligência de ameaças independente</h2>
+  <p class="lede" data-i18n="hunt_lede">
     Pesquisa OSINT e forense de blockchain sobre operações de ransomware, feita inteiramente
     com dados públicos — na linha do que o programa Rewards for Justice do Departamento de
     Estado dos EUA usa pra identificar operadores de grupos como o LockBit.
   </p>
 
-  <div class="rfj-banner">
+  <div class="rfj-banner" data-i18n="rfj_banner">
     <strong>[ REWARDS FOR JUSTICE ]</strong> — o governo dos EUA oferece até <strong>US$10 milhões</strong>
     por informações que levem à identificação/localização de operadores do LockBit
     (o administrador da rede, conhecido como "LockBitSupp"/Dmitry Khoroshev, foi indiciado
@@ -408,33 +434,34 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
     segue a mesma lógica de inteligência pública que esse tipo de programa depende.
   </div>
 
-  <div class="safety-note">
+  <div class="safety-note" data-i18n="safety_note">
     <strong>[!] nota de segurança</strong> — tudo abaixo vem de um dataset já público (vazamento
-    do painel LockBit 4.0 de maio/2025, autenticidade confirmada por TRM Labs, Forescout,
-    Trellix e Cisco Talos). Nenhum acesso não autorizado foi feito. Identificadores de atribuição
-    e a vítima do setor financeiro ainda não notificada foram <span class="redacted" title="retido — encaminhado às autoridades competentes">████████</span>
-    e encaminhados aos canais apropriados — não aparecem aqui.
+    do painel LockBit 4.0 de maio/2025) cruzado com relatórios públicos da Forescout/Vedere
+    Labs, TRM Labs, Trellix e Cisco Talos. Nenhum acesso não autorizado foi feito.
+    Identificadores de atribuição foram submetidos ao FBI via canal oficial de denúncia
+    (julho/2026), e duas possíveis vítimas ainda não notificadas foram <span class="redacted" title="retido — encaminhado às autoridades competentes">████████</span>
+    e sinalizadas pelos canais apropriados — não aparecem aqui.
   </div>
 
   <div class="case-board">
     <div class="case-head">
       <div class="case-badge"><span>LB</span></div>
       <div class="case-head-text">
-        <h3>LockBit 4.0 — Afiliados não documentados</h3>
+        <h3 data-i18n="case_head_h">LockBit 4.0 — Afiliados não documentados</h3>
         <div class="meta">
-          <span>fonte: painel breach, mai/2025</span>
-          <span>3 afiliados analisados</span>
-          <span>7 achados inéditos</span>
+          <span data-i18n="case_meta1">fonte: painel breach, mai/2025</span>
+          <span data-i18n="case_meta2">3 afiliados analisados</span>
+          <span data-i18n="case_meta3">8 achados inéditos</span>
         </div>
       </div>
-      <div class="case-status"><span class="dot"></span> sob investigação</div>
+      <div class="case-status"><span class="dot"></span> <span data-i18n="case_status">sob investigação</span></div>
     </div>
 
     <div class="case-stats">
-      <div class="case-stat"><div class="n">3</div><div class="l">wallets dormentes com saldo confirmado</div></div>
-      <div class="case-stat"><div class="n">44</div><div class="l">builds na campanha "n046" (9 países)</div></div>
-      <div class="case-stat"><div class="n">69</div><div class="l">vítimas de um único afiliado em 81 dias</div></div>
-      <div class="case-stat"><div class="n">21TB</div><div class="l">maior exfiltração única identificada</div></div>
+      <div class="case-stat"><div class="n">3</div><div class="l" data-i18n="stat1">wallets dormentes com saldo confirmado</div></div>
+      <div class="case-stat"><div class="n">44</div><div class="l" data-i18n="stat2">builds na campanha "n046" (9 países)</div></div>
+      <div class="case-stat"><div class="n">69</div><div class="l" data-i18n="stat3">vítimas de um único afiliado em 81 dias</div></div>
+      <div class="case-stat"><div class="n">21TB</div><div class="l" data-i18n="stat4">maior exfiltração única identificada</div></div>
     </div>
 
     <div class="affiliate-grid">
@@ -443,14 +470,14 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
           <div class="aff-photo"></div>
           <div>
             <div class="aff-name">umarbishop47</div>
-            <div class="aff-sub">advid 28 · tag "newbie"</div>
+            <div class="aff-sub" data-i18n="aff1_sub">advid 28 · tag "newbie"</div>
           </div>
         </div>
         <div class="aff-wallet">bc1qx3e...vakgvt</div>
-        <div class="aff-facts">
+        <div class="aff-facts" data-i18n="aff1_facts">
           53 builds (vs. ~8 em análises anteriores) · campanha <span class="hl">"n046"</span> —
-          batch de IAB não documentado, 8 países da América Latina + Europa ·
-          6 ataques simultâneos em janela de 2h (21/12/2024)
+          6 empresas em 5 países comprometidas em uma janela de <span class="hl2">40 minutos</span>
+          (21/12/2024) · assinatura forense de compra em lote de um IAB
         </div>
       </div>
 
@@ -459,11 +486,11 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
           <div class="aff-photo"></div>
           <div>
             <div class="aff-name">ArrynBaird</div>
-            <div class="aff-sub">advid 13 · tag "newbie"</div>
+            <div class="aff-sub" data-i18n="aff2_sub">advid 13 · tag "newbie"</div>
           </div>
         </div>
         <div class="aff-wallet">bc1qat8...zh5yd</div>
-        <div class="aff-facts">
+        <div class="aff-facts" data-i18n="aff2_facts">
           13 vítimas confirmadas · resgates de $10k–$200k · build <span class="hl2">mac_200k</span> —
           ataque a macOS não documentado em nenhuma base pública · pagou acesso ao painel em Monero
         </div>
@@ -474,15 +501,50 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
           <div class="aff-photo"></div>
           <div>
             <div class="aff-name">btcdrugdealer</div>
-            <div class="aff-sub">advid 55 · tag "verified"</div>
+            <div class="aff-sub" data-i18n="aff3_sub">advid 55 · tag "verified"</div>
           </div>
         </div>
         <div class="aff-wallet">bc1qkhm...jvpt8q</div>
-        <div class="aff-facts">
+        <div class="aff-facts" data-i18n="aff3_facts">
           69 vítimas em 81 dias (pico de 4/dia) · exfiltração de <span class="hl">21TB</span> via Linux ·
-          alvo no <span class="hl2">Irã</span> — atípico pra afiliados russos · tentativa não divulgada
-          contra corretora financeira regulamentada
+          EUA, Canadá, Reino Unido, Colômbia, Brasil e outros · alvo no <span class="hl2">Irã</span> —
+          atípico pra afiliados russos
         </div>
+      </div>
+    </div>
+
+    <div class="iab-card">
+      <div class="iab-head">
+        <h4 data-i18n="iab_h">IAB suspeito — Mora_001</h4>
+        <span class="iab-badge" data-i18n="iab_badge">hipótese · não confirmada</span>
+      </div>
+      <p data-i18n="iab_p">
+        O perfil da campanha n046 se correlaciona fortemente com <strong style="color:var(--ink);">Mora_001</strong>,
+        ator documentado pela Forescout/Vedere Labs em março de 2025 explorando uma dupla de
+        vulnerabilidades de bypass de autenticação no FortiOS (CVE-2024-55591, CVSS 9.6) para
+        obter privilégios <code style="color:var(--acid);font-family:var(--pmono);">super_admin</code>
+        em interfaces de gerência FortiGate expostas — exploração ativa desde novembro/2024,
+        6 semanas antes do primeiro lote n046.
+      </p>
+      <table class="iab-table" data-i18n="iab_table">
+        <tr><th>Fator</th><th>Campanha n046</th><th>Mora_001 (Forescout, mar/2025)</th></tr>
+        <tr><td>Timing</td><td>Lote 1 em 21/12/2024</td><td>CVE-2024-55591 explorada como 0-day desde nov/2024</td></tr>
+        <tr><td>Perfil de vítima</td><td>Empresas médias LatAm/Ibéricas, multi-setor</td><td>Organizações com interface de gerência FortiGate exposta</td></tr>
+        <tr><td>Padrão de ataque</td><td>6 empresas em 5 países em 40 min</td><td>Scripts automatizados testando múltiplos alvos</td></tr>
+        <tr><td>Conexão LockBit</td><td>Afiliado LockBit 4.0 confirmado</td><td>TOX ID em notas de resgate SuperBlack já ligado ao LockBit 3.0</td></tr>
+      </table>
+      <div class="iab-iocs" data-i18n="iab_iocs">
+        infraestrutura (fonte: relatório público da Forescout) — <code>ASN48282</code> (VDSINA, Moscou) ·
+        faixa <code>185.147.124.0/24</code> · VPN geolocalizada na Rússia via <code>89.248.192.55</code> ·
+        usuários pós-exploração: <code>forticloud-tech</code>, <code>fortigate-firewall</code>,
+        <code>adnimistrator</code> (erro de digitação intencional)
+      </div>
+      <div class="iab-confidence" data-i18n="iab_confidence">
+        <strong>[avaliação de confiança]</strong> hipótese forte, sustentada por timing, perfil de vítima,
+        método operacional e sobreposição de ecossistema — mas não é uma atribuição confirmada.
+        A Forescout não publicou nenhuma conexão direta entre Mora_001 e o código n046.
+        Confirmação exigiria análise de logs das vítimas da n046 ou processo legal junto ao
+        provedor de hospedagem do Mora_001.
       </div>
     </div>
   </div>
@@ -491,19 +553,20 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
     <div class="md-titlebar">
       <span class="dots"><span></span><span></span><span></span></span>
       <span>$ cat lockbit_public_report.md</span>
+      <span style="margin-left:auto;opacity:.6;">[PT-BR only]</span>
     </div>
     <div class="md-viewer" id="mdViewer"></div>
   </div>
 </section>
 
 <section id="next" class="reveal">
-  <span class="eyebrow">Continuação</span>
-  <h2 class="title">Mais casos, conforme forem fechados</h2>
-  <p class="lede" style="margin:0 auto;">
+  <span class="eyebrow" data-i18n="next_eyebrow">Continuação</span>
+  <h2 class="title" data-i18n="next_title">Mais casos, conforme forem fechados</h2>
+  <p class="lede" style="margin:0 auto;" data-i18n="next_lede">
     Esta gaveta cresce conforme novas investigações são concluídas e liberadas para publicação.
   </p>
   <div class="contact-row">
-    <a class="btn primary" href="index.html#security" data-transition="Voltando ao portal">Voltar pro Red Team →</a>
+    <a class="btn primary" href="index.html#security" data-transition="Voltando ao portal" data-i18n="next_btn">Voltar pro Red Team →</a>
     <a class="btn" href="https://www.linkedin.com/in/gabriel-skura-ribeiro-701a91254/" target="_blank" rel="noopener">LinkedIn →</a>
   </div>
 </section>
@@ -512,7 +575,7 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
 <footer>
   <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
-  <span>case files · dados públicos · disclosure responsável</span>
+  <span data-i18n="footer_tag">case files · dados públicos · disclosure responsável</span>
 </footer>
 
 <script>
@@ -526,144 +589,170 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 document.getElementById('mdViewer').innerHTML = `
 <h4>Abstract</h4>
 <p>Após o vazamento do painel de afiliados do LockBit 4.0 em maio de 2025, várias empresas
-publicaram análises focadas nos cinco afiliados mais ativos por volume de mensagens
-(Christopher, Swan, PiotrBond, JamesCraig, Lofikdis). Este relatório documenta
-<strong>três afiliados que não aparecem em nenhuma publicação anterior</strong>, identificados por
-forense de blockchain independente e cruzamento de dataset.</p>
-<p>Toda a informação vem exclusivamente de dados públicos. Nenhum acesso não autorizado foi
-realizado. Identificadores de atribuição e vítimas específicas não notificadas foram
-submetidos aos canais apropriados de aplicação da lei e omitidos desta publicação.</p>
+publicaram análises focadas nos cinco afiliados mais ativos por volume de mensagens. Este
+relatório documenta três afiliados ausentes de toda publicação anterior, e estende a
+investigação para identificar o provável Initial Access Broker (IAB) que fornece acesso em
+lote para um deles. Achados-chave: três wallets BTC dormentes com proventos de resgate
+confirmados; uma campanha coordenada na América Latina não documentada, abrangendo nove
+países com um código de compra em lote consistente; 69 ataques confirmados por um único
+afiliado em 81 dias; e uma hipótese conectando o IAB por trás da campanha ao
+<strong>Mora_001</strong>, ator de ameaça especializado em exploração do Fortinet com laços
+confirmados ao ecossistema LockBit.</p>
+<p>Todos os dados vêm exclusivamente de fontes públicas. Identificadores de atribuição e
+vítimas específicas não notificadas foram submetidos aos canais apropriados de aplicação da
+lei e omitidos desta publicação.</p>
 
 <h4>Background</h4>
 <p>Em 7 de maio de 2025, um agente desconhecido violou o painel de afiliados dark web do
-LockBit 4.0 e divulgou um dump de banco MySQL (<code>paneldb_dump.zip</code>). O dataset cobre
-dezembro/2024 a abril/2025 e inclui 75 contas de afiliados, ~60.000 endereços BTC, 1.183
-builds de ransomware e logs de negociação. Pesquisadores da TRM Labs, Forescout/Vedere Labs,
-Trellix, Cisco Talos e Yarix publicaram análises focadas num subconjunto pequeno dos
-afiliados mais visíveis.</p>
+LockBit 4.0 e divulgou o backend MySQL como dump público. O dataset cobre dezembro/2024 a
+abril/2025 e inclui 75 contas de afiliados, ~60.000 endereços BTC, 1.183 builds de
+ransomware e metadados de negociação. Análises da TRM Labs, Forescout/Vedere Labs, Trellix,
+Cisco Talos e Yarix (mai–jun/2025) focaram coletivamente nos cinco afiliados mais visíveis
+de um total de 44 que de fato conduziram ataques.</p>
 
 <h4>Metodologia</h4>
 <ol>
-  <li>Parsing dos CSVs de <span class="src-tag">github.com/Hexastrike/LockBit-Database-Leak-2025</span></li>
-  <li>Ranqueamento cruzado de <code>lockbit-users.csv</code>, <code>lockbit-bitcoin-addresses.csv</code> e <code>lockbit-files.csv</code> — todos os 35 afiliados com endereços BTC</li>
-  <li>Verificação on-chain via API pública do <code>mempool.space</code></li>
-  <li>Correlação de campanhas a partir de nomes de arquivo de build</li>
-  <li>Validação cruzada contra toda a literatura publicada, para confirmar ineditismo</li>
+  <li>Ranqueamento de todos os afiliados com endereços BTC por contagem de vítimas, cruzando <code>lockbit-users.csv</code>, <code>lockbit-bitcoin-addresses.csv</code> e <code>lockbit-files.csv</code></li>
+  <li>Verificação on-chain via API pública do <code>mempool.space</code> para todos os endereços fora do top-5 já documentado</li>
+  <li>Extração de nomes de build para identificar padrões geográficos, códigos de campanha e slugs de vítima</li>
+  <li>Cruzamento com ransomware.live e anúncios do site de vazamento do LockBit para confirmar identidades de vítimas</li>
+  <li>Correlação de timing de campanha e perfil de vítimas contra threat intel publicada sobre atores IAB conhecidos</li>
 </ol>
 
 <h4>Achado 1 — Três wallets ativas em afiliados não documentados</h4>
-<p>Das 35 wallets analisadas, apenas o top-5 já documentado tinha fundos on-chain confirmados
-— ou era o que se supunha. Esta pesquisa encontrou <strong>três wallets adicionais com atividade
-confirmada</strong>, nenhuma citada em publicação anterior:</p>
+<p>Das 35 wallets analisadas, análises anteriores documentaram atividade apenas no top-5.
+Esta pesquisa identificou <strong>três afiliados adicionais com atividade on-chain
+confirmada</strong> — todos ausentes de qualquer publicação anterior:</p>
 <table>
 <tr><th>Afiliado</th><th>Recebido (sats)</th><th>Status</th></tr>
 <tr><td>umarbishop47</td><td>7.191.141</td><td>dormente — nunca movimentada</td></tr>
 <tr><td>ArrynBaird</td><td>1.906.015</td><td>dormente — nunca movimentada</td></tr>
 <tr><td>btcdrugdealer</td><td>465.493</td><td>dormente — nunca movimentada</td></tr>
 </table>
-<p>As três wallets receberam exatamente uma transação e nunca tiveram saída. Padrão
-consistente com "fundos administrativos parados" documentado pela TRM Labs — aqui aplicado a
-wallets de afiliados, sugerindo pagamentos de resgate nunca processados pelo fluxo de
-comissão padrão, possivelmente pela violação do painel interromper operações no fim de
-abril/2025.</p>
+<p>Cada wallet recebeu exatamente uma transação de entrada e zero atividade de saída —
+consistente com fundos parados antes da violação do painel em maio/2025 interromper as
+operações.</p>
 
-<h4>Achado 2 — Campanha "n046": operação não documentada na América Latina</h4>
-<p><strong>umarbishop47</strong> (advid 28, tag "newbie") operou em escala muito maior do que a
-classificação sugere: <strong>53 builds</strong> no total (vs. ~8 visíveis em análises anteriores).
-O código de campanha <span class="novel">"n046"</span> aparece em 44 dos 53 nomes de arquivo — inédito
-em qualquer publicação de threat intel.</p>
+<h4>Achado 2 — Campanha "n046": operação coordenada de IAB não documentada</h4>
+<p>A análise de <code>lockbit-files.csv</code> revelou que umarbishop47 (advid 28, tag "newbie")
+operou em escala muito maior do que a classificação sugere: <strong>53 builds</strong> no total,
+contra ~8 visíveis em análises anteriores. Mais significativo: 44 desses 53 builds
+compartilham o padrão consistente <code>_n046_[país].zip</code> — código de campanha inédito em
+qualquer relatório de threat intel publicado.</p>
+<p><strong>Observação crítica de timing:</strong> os seis primeiros ataques n046 foram criados
+dentro de uma <span class="novel">janela de 40 minutos</span> em 21/12/2024 (15:00–15:39 UTC),
+mirando empresas em cinco países diferentes simultaneamente:</p>
 <table>
-<tr><th>País</th><th>Vítimas confirmadas</th></tr>
-<tr><td>Brasil</td><td>8</td></tr>
-<tr><td>México</td><td>5</td></tr>
-<tr><td>Argentina</td><td>3</td></tr>
-<tr><td>Colômbia</td><td>2</td></tr>
-<tr><td>Itália</td><td>2</td></tr>
-<tr><td>Bolívia</td><td>2</td></tr>
-<tr><td>Uruguai</td><td>1</td></tr>
-<tr><td>Espanha</td><td>1</td></tr>
+<tr><th>Horário (UTC)</th><th>Empresa</th><th>País</th></tr>
+<tr><td>15:00</td><td>ATP Formosa (autoridade tributária provincial)</td><td>Argentina</td></tr>
+<tr><td>15:11</td><td>Candelas y Asociados S.L.</td><td>Espanha</td></tr>
+<tr><td>15:16</td><td>Gelco Gelatinas do Brasil Ltda</td><td>Brasil</td></tr>
+<tr><td>15:19</td><td>Viação Jacareí (Jacareí Transporte Urbano Ltda)</td><td>Brasil</td></tr>
+<tr><td>15:31</td><td>Pasteurizadora La Mejor S.A.</td><td>Colômbia</td></tr>
+<tr><td>15:39</td><td>NICATEL S.A. (distribuidora Samsung)</td><td>Uruguai</td></tr>
 </table>
-<p><strong>Observação crítica de timing:</strong> seis dos primeiros ataques n046 ocorreram numa
-única janela de 2 horas em 21/12/2024, mirando empresas na Argentina, Espanha, Brasil (×2),
-Colômbia e Uruguai simultaneamente — padrão inconsistente com seleção manual de vítima, e
-consistente com <strong>compra em lote de um Initial Access Broker (IAB)</strong>. "n046" pode
-representar o número de lote 46 do catálogo desse fornecedor.</p>
-<p>Campanha secundária <span class="novel">"serebro"</span> (7 builds, Itália/EUA) usa uma fonte de acesso
-distinta, com alvo geograficamente incompatível com o foco latino-americano da n046.</p>
-<p>Vítimas já confirmadas publicamente pela n046 (anunciadas pelo próprio LockBit,
-via ransomware.live): NICATEL S.A. (Uruguai), ATP Formosa (Argentina), Gelco Gelatinas do
-Brasil, Candelas y Asociados S.L. (Espanha), Pasteurizadora La Mejor S.A. (Colômbia). As
-demais 17+ vítimas da n046 seguem não identificadas publicamente.</p>
+<p>Comprometer seis empresas em cinco países em 40 minutos é operacionalmente impossível sem
+acesso pré-comprado. Esta é a assinatura forense de uma venda em lote de IAB: o acesso a
+essas redes foi obtido com antecedência, empacotado e entregue a umarbishop47 como uma única
+compra. O código "n046" é o identificador de lote do IAB — lote número 46, implicando uma
+operação sustentada com pelo menos 45 lotes anteriores.</p>
+<p>Ondas subsequentes da n046 continuaram até abril/2025, estendendo-se a México, Itália e
+Bolívia. Total publicamente confirmado da campanha: 9 empresas. O dataset contém evidência de
+13 vítimas adicionais ainda não identificadas.</p>
+<p>Uma campanha secundária de código <span class="novel">"serebro"</span> (russo/eslavo para prata)
+aparece em 7 builds mirando Itália e EUA — provavelmente uma fonte de acesso separada ou
+lote distinto do mesmo IAB.</p>
 
-<h4>Achado 3 — ArrynBaird: 13 vítimas, incluindo ataque macOS não documentado</h4>
+<h4>Achado 3 — Hipótese de atribuição do IAB: Mora_001</h4>
+<p>O perfil da campanha n046 se correlaciona fortemente com <strong>Mora_001</strong>, ator de
+ameaça documentado pela Forescout/Vedere Labs em março de 2025, explorando vulnerabilidades
+de bypass de autenticação no FortiOS (CVE-2024-55591, CVSS 9.6) para obter privilégios
+<code>super_admin</code> em interfaces de gerência FortiGate expostas.</p>
+<table>
+<tr><th>Fator</th><th>Campanha n046</th><th>Mora_001 (Forescout, mar/2025)</th></tr>
+<tr><td>Timing</td><td>Lote 1 implantado em 21/12/2024</td><td>CVE-2024-55591 explorada como 0-day desde nov/2024</td></tr>
+<tr><td>Perfil de vítima</td><td>Empresas médias LatAm/Ibéricas, multi-setor</td><td>Organizações com interface de gerência FortiGate exposta</td></tr>
+<tr><td>Padrão de ataque</td><td>6 empresas em 5 países em 40 min</td><td>Scripts automatizados testam múltiplos alvos simultaneamente</td></tr>
+<tr><td>Conexão LockBit</td><td>Afiliado LockBit 4.0 confirmado</td><td>TOX ID em notas de resgate SuperBlack já ligado ao LockBit 3.0</td></tr>
+<tr><td>Foco geográfico</td><td>América Latina + Península Ibérica</td><td>Maior exposição FortiGate: EUA, Índia, Brasil (3.201 expostos)</td></tr>
+</table>
+<p>A Forescout confirmou exploração desde novembro/2024 — 6 semanas antes do primeiro lote
+n046 — com Mora_001 usando scripts automatizados para varrer e comprometer alvos rapidamente.
+Isso combina com o modelo n046: um ator com acesso FortiGate obtido via exploração em massa da
+CVE-2024-55591 vende lotes de credenciais para afiliados LockBit. O rótulo "n046" é o número
+do lote.</p>
+<p><strong>Infraestrutura</strong> (fonte: relatório público da Forescout) — servidores em
+<code>ASN48282</code> (VDSINA, Moscou, Rússia), atividade confirmada na faixa
+<code>185.147.124.0/24</code>. Uma conexão VPN partindo do IP <code>89.248.192.55</code> foi
+geolocalizada na Rússia em logs de FortiGate de vítimas. O IP <code>185.147.124.34</code> foi
+observado rodando uma ferramenta de força bruta de VPN em russo, na porta 7000. Usuários
+pós-exploração criados consistentemente em todas as vítimas do Mora_001:
+<code>forticloud-tech</code>, <code>fortigate-firewall</code>, <code>adnimistrator</code> (erro de
+digitação intencional).</p>
+<p><strong>Método de verificação para aplicação da lei:</strong> checar logs das vítimas da n046
+em busca desses nomes de usuário confirmaria ou descartaria a conexão com o IAB.</p>
+<p><strong>Avaliação de confiança:</strong> esta é uma <strong>hipótese forte</strong>, sustentada por
+timing, perfil de vítima, método operacional e sobreposição de ecossistema — mas não é uma
+atribuição confirmada. A Forescout não publicou nenhuma conexão direta entre Mora_001 e o
+código de campanha n046. Confirmação exigiria análise de log das vítimas da n046 ou processo
+legal junto ao provedor de hospedagem do Mora_001.</p>
+
+<h4>Achado 4 — ArrynBaird: 13 vítimas, incluindo ataque macOS não documentado</h4>
 <p><strong>ArrynBaird</strong> (advid 13, "newbie") conduziu 13 ataques confirmados entre janeiro e
-abril de 2025, com resgates de $10.000 a $200.000. Um build com a notação
-<code>mac_200k</code> (criado em 17/04/2025) indica um ataque a macOS com resgate de $200.000 —
-atípico pro LockBit, que majoritariamente ataca Windows e ESXi. Não aparece em nenhuma base
-de incidentes de ransomware. ArrynBaird também pagou a taxa de acesso ao painel em
-<strong>Monero</strong> (3.635 XMR) em vez de Bitcoin, indicando maior consciência operacional de
-segurança que os outros dois afiliados analisados.</p>
+abril de 2025, com resgates de $10.000 a $200.000. Um build contém a notação
+<code>mac_200k</code> — ataque a macOS com demanda de $200.000, criado em 17/04/2025. Alvo em
+macOS é atípico pro LockBit; esse incidente não aparece em nenhuma base pública de
+ransomware. ArrynBaird pagou o acesso ao painel via <strong>Monero</strong> em vez de Bitcoin,
+indicando maior consciência operacional de segurança que os outros dois afiliados.</p>
 
-<h4>Achado 4 — btcdrugdealer: 69 vítimas em 81 dias</h4>
-<p><strong>btcdrugdealer</strong> (advid 55, tag <strong>verified</strong>) é o mais operacionalmente ativo
-dos três afiliados documentados.</p>
+<h4>Achado 5 — btcdrugdealer: 69 vítimas em 81 dias</h4>
+<p><strong>btcdrugdealer</strong> (advid 55, tag <strong>verified</strong> — nível de confiança
+atribuído pelo administrador) é o mais operacionalmente ativo dos três:</p>
 <table>
 <tr><th>Métrica</th><th>Valor</th></tr>
-<tr><td>Período ativo</td><td>02/02/2025 – 24/04/2025 (81 dias)</td></tr>
-<tr><td>Dias com atividade</td><td>41</td></tr>
+<tr><td>Período ativo</td><td>02/02/2025 – 24/04/2025</td></tr>
 <tr><td>Vítimas únicas</td><td>69</td></tr>
 <tr><td>Pico de atividade</td><td>4 vítimas/dia</td></tr>
-<tr><td>Plataformas</td><td>Windows (principal), Linux, ESXi (VMware)</td></tr>
+<tr><td>Plataformas</td><td>Windows, Linux, ESXi (VMware)</td></tr>
+<tr><td>Países</td><td>EUA, Canadá, Reino Unido, Colômbia, Brasil e outros</td></tr>
 </table>
-<p>Alvo em ESXi é significativo: um único host comprometido pode criptografar dezenas de VMs
-simultaneamente. Exfiltrações notáveis: 21TB via Linux/LockBit Green (13/02/2025) — a maior
-identificada entre os três afiliados — e 4TB via Windows (04/02/2025).</p>
-<p><strong>Alvo anômalo — Irã:</strong> um build de 07/02/2025 contém a notação <code>iran</code>. Os
-termos do LockBit proíbem ataques a países da CEI, mas não listam o Irã explicitamente. É um
-comportamento atípico para afiliados operando em ecossistemas alinhados à Rússia.</p>
-<p><strong>Tentativa não divulgada contra instituição financeira regulamentada:</strong> um registro na
-tabela de requisições inválidas do painel mostra btcdrugdealer tentando configurar um build
-contra uma corretora de câmbio regulamentada, com mais de 35 anos de operação e 238
-funcionários. A requisição foi bloqueada pelo rate limiter do painel em 17/02/2025. Não se
-sabe se o ataque foi executado por outros meios depois. Essa entidade não aparece em nenhuma
-base pública de vazamentos de ransomware.
-<span class="redacted" title="nome retido — encaminhado às autoridades competentes">[nome retido — encaminhado às autoridades competentes]</span></p>
-
-<h4>Rede de recrutadores</h4>
-<p>Cada afiliado entrou no painel via sistema de convite. As wallets que receberam as taxas de
-acesso não aparecem em nenhum outro lugar do dataset como afiliados registrados — indicando
-que os recrutadores operam num nível hierárquico acima, dentro do próprio ecossistema LockBit.</p>
+<p>Exfiltrações notáveis identificadas nas notações de build: 21 terabytes (ataque único via
+Linux, 13/02) e 4 terabytes (04/02). Alvo em ESXi indica ataques a infraestrutura de
+virtualização corporativa, onde um único host comprometido pode criptografar dezenas de VMs.</p>
+<p>Um build mira uma entidade iraniana — comportamento incomum pra um afiliado LockBit, já que
+operadores alinhados à Rússia tipicamente evitam o Irã. Isso pode indicar origem não-russa,
+motivação geopolítica além do ganho financeiro, ou postura ideológica independente.</p>
 
 <h4>Comparação com pesquisa publicada anteriormente</h4>
 <table>
 <tr><th>Achado</th><th>TRM Labs (mai/2025)</th><th>Forescout (jun/2025)</th><th>Esta pesquisa</th></tr>
-<tr><td>Top-5 afiliados perfilados</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓ (replicado)</td></tr>
-<tr><td>Escala real de umarbishop47 (53 builds)</td><td class="no">✗</td><td>parcial (20 builds)</td><td class="novel">✓</td></tr>
+<tr><td>Top-5 afiliados documentados</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+<tr><td>Escala real de umarbishop47 (53 builds)</td><td class="no">✗</td><td>parcial</td><td class="novel">✓</td></tr>
 <tr><td>Código de campanha "n046"</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
 <tr><td>Campanha secundária "serebro"</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
 <tr><td>btcdrugdealer (69 vítimas)</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
 <tr><td>ArrynBaird — ataque macOS $200k</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
 <tr><td>3 wallets dormentes de afiliado</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
+<tr><td>Hipótese IAB n046 / Mora_001</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
 <tr><td>Identificação de wallets de recrutador</td><td class="no">✗</td><td class="no">✗</td><td class="novel">✓ inédito</td></tr>
-<tr><td>Alvo não divulgado no setor financeiro</td><td class="no">✗</td><td class="no">✗</td><td>✓ (retido)</td></tr>
 </table>
 
 <h4>Limitações</h4>
 <ul>
-  <li>A tabela de chats está redigida/censurada no repositório público — sem conteúdo de negociação disponível para cruzamento</li>
-  <li>Valores das wallets são modestos ($460–$7.200), sugerindo pagamentos parciais, não resgates completos</li>
-  <li>Atribuição a identidades reais não é possível só com dados públicos — a análise on-chain para no endereço de depósito da exchange</li>
-  <li>Identificação de vítimas limitada a padrões de slug e casos anunciados publicamente — muitas seguem não identificadas</li>
+  <li>A tabela de chats está redigida no repositório público — sem conteúdo de negociação disponível</li>
+  <li>Valores das wallets ($460–$7.200) sugerem pagamentos parciais, não resgates completos</li>
+  <li>A conexão Mora_001/n046 é uma hipótese baseada em correlação, não uma atribuição confirmada</li>
+  <li>Atribuição a identidades reais não é possível só com dados públicos</li>
 </ul>
 
 <h4>Disclosure responsável</h4>
-<p>Identificadores de atribuição descobertos nesta pesquisa foram submetidos aos canais
-apropriados de aplicação da lei. A vítima não divulgada do setor financeiro foi sinalizada
-para notificação pelos canais apropriados. Nenhum dado de vítima, chave privada ou material
-de decriptação foi acessado ou é publicado aqui.</p>
+<p>Identificadores de atribuição descobertos nesta pesquisa foram submetidos ao FBI via canal
+oficial de denúncia (julho/2026). Duas possíveis vítimas ainda não notificadas foram
+sinalizadas pelos canais apropriados. Nenhum dado de vítima, chave privada ou material de
+decriptação foi acessado ou é publicado aqui.</p>
 
 <h4>Indicadores de comprometimento (públicos)</h4>
-<p><strong>Wallets BTC com proventos de resgate (todas dormentes):</strong></p>
+<p><strong>Wallets BTC com proventos de resgate confirmados (todas dormentes):</strong></p>
 <ul>
   <li><code>bc1qx3e4eslyzhclzr4y4yexw3jhyw5n4xe4vakgvt</code> (umarbishop47)</li>
   <li><code>bc1qat80jxvlng5gpt2er5ghz42zrd4f3dv36zh5yd</code> (ArrynBaird)</li>
@@ -678,8 +767,9 @@ de decriptação foi acessado ou é publicado aqui.</p>
 <hr class="hr">
 <p style="font-size:11.5px;">Pesquisa de segurança independente. Todos os dados vêm de material publicamente
 disponível. Submetido de boa-fé em benefício da comunidade de segurança e das organizações
-afetadas. Fontes completas: TRM Labs, Forescout/Vedere Labs, Trellix, Cisco Talos, Hexastrike
-(GitHub), ransomware.live, mempool.space.</p>
+afetadas. Fontes completas: TRM Labs, Forescout/Vedere Labs ("Ransomware Services Exposed",
+jun/2025 e "New Ransomware Operator Exploits Fortinet Vulnerability Duo", mar/2025), Trellix,
+Cisco Talos, Hexastrike (GitHub), ransomware.live, mempool.space.</p>
 `;
 </script>
 
@@ -810,6 +900,7 @@ afetadas. Fontes completas: TRM Labs, Forescout/Vedere Labs, Trellix, Cisco Talo
     { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
     { label:'Case Files — BUG',       file:'casefile.html',   hash:'#bug' },
     { label:'Case Files — HUNTING',   file:'casefile.html',   hash:'#hunting' },
+    { label:'EMPEROR',                file:'emperor.html',    hash:'' },
   ];
 
   function currentFile(){
@@ -835,6 +926,75 @@ afetadas. Fontes completas: TRM Labs, Forescout/Vedere Labs, Trellix, Cisco Talo
   });
 })();
 </script>
+
+<script>
+window.I18N_EN = {
+  nav_back: "portfolio", nav_bug: "bug", nav_hunting: "hunting", jump: "random dimension",
+
+  hero_tag: "restricted file // access level: public",
+  hero_sub: "Two drawers of the same file. One with what I reported and got credit for finding. The other with what I'm tracking — not to exploit it, but to help identify who already has.",
+  prompt1: "XenomorphSk · independent researcher · no institutional affiliation",
+  prompt2: "public data · responsible disclosure · no unauthorized access",
+  jump_bug: "↓ go to BUG",
+  jump_hunt: "↓ go to HUNTING",
+
+  bug_eyebrow: "Drawer 01",
+  bug_title: "BUG — reports & honorable mentions",
+  bug_lede: "What I found, reported, and what the programs did with it — including the cases where the \"prize\" was just the credit.",
+  bug1_badge: "estimated reward",
+  bug1_p: "Type-promotion bug identified in <code style=\"font-family:var(--pmono);color:var(--acid);\">SkBmpRLECodec.cpp</code>, validated with AddressSanitizer and submitted with a full report (Issue 531478064). Google escalated severity within minutes: priority P4→P3, severity S4→S3.",
+  bug1_m1: "ASan verified",
+  bug1_m2: "estimated range $2,500–$4,000",
+  bug2_p: "~6 weeks of work on a denial-of-service condition in the repacker. Classified as <em style=\"color:var(--ink);font-style:normal;\">availability-only</em> — honorable mention, no monetary reward. This case is what made me build a triage system before investing in a PoC or report.",
+  bug2_m1: "~6 weeks",
+  bug2_m2: "no reward",
+  triage_eyebrow: "What HarfBuzz taught me",
+  triage_lede: "Since then, every finding is classified into these 4 categories before I invest time in a proof of concept:",
+  triage1: "RCE, exploitable memory corruption — top PoC priority.",
+  triage2: "Real corruption, but limited or uncertain exploitability.",
+  triage3: "DoS/crash with no clear escalation path — usually an honorable mention.",
+  triage4: "Ambiguous signal — needs more investigation before deciding.",
+  other_progs: "Other active programs",
+
+  hunt_eyebrow: "Drawer 02",
+  hunt_title: "HUNTING — independent threat intelligence",
+  hunt_lede: "OSINT research and blockchain forensics on ransomware operations, done entirely with public data — in line with what the U.S. State Department's Rewards for Justice program uses to identify operators of groups like LockBit.",
+  rfj_banner: "<strong>[ REWARDS FOR JUSTICE ]</strong> — the U.S. government offers up to <strong>US$10 million</strong> for information leading to the identification/location of LockBit operators (the network's administrator, known as \"LockBitSupp\"/Dmitry Khoroshev, was indicted in May 2024 with a reward of this amount). Official program: <a href=\"https://rewardsforjustice.net/\" target=\"_blank\" rel=\"noopener\">rewardsforjustice.net</a>. My research has no affiliation with the U.S. government — it's independent work following the same public-intelligence logic this kind of program relies on.",
+  safety_note: "<strong>[!] security note</strong> — everything below comes from an already-public dataset (LockBit 4.0 panel leak, May/2025) cross-referenced with public reports from Forescout/Vedere Labs, TRM Labs, Trellix, and Cisco Talos. No unauthorized access was performed. Attribution identifiers were submitted to the FBI via official tip channel (July/2026), and two possible unnotified victims were <span class=\"redacted\" title=\"withheld — forwarded to the appropriate authorities\">████████</span> and flagged through appropriate channels — they don't appear here.",
+
+  case_head_h: "LockBit 4.0 — Undocumented affiliates",
+  case_meta1: "source: panel breach, May/2025",
+  case_meta2: "3 affiliates analyzed",
+  case_meta3: "8 novel findings",
+  case_status: "under investigation",
+  stat1: "dormant wallets with confirmed balance",
+  stat2: "builds in the \"n046\" campaign (9 countries)",
+  stat3: "victims from a single affiliate in 81 days",
+  stat4: "largest single exfiltration identified",
+
+  aff1_sub: "advid 28 · tag \"newbie\"",
+  aff1_facts: "53 builds (vs. ~8 in prior analyses) · campaign <span class=\"hl\">\"n046\"</span> — 6 companies across 5 countries compromised in a <span class=\"hl2\">40-minute</span> window (12/21/2024) · forensic signature of an IAB batch purchase",
+  aff2_sub: "advid 13 · tag \"newbie\"",
+  aff2_facts: "13 confirmed victims · ransoms from $10k–$200k · build <span class=\"hl2\">mac_200k</span> — macOS attack not documented in any public database · paid panel access in Monero",
+  aff3_sub: "advid 55 · tag \"verified\"",
+  aff3_facts: "69 victims in 81 days (peak of 4/day) · <span class=\"hl\">21TB</span> exfiltration via Linux · USA, Canada, UK, Colombia, Brazil and others · targeted <span class=\"hl2\">Iran</span> — atypical for Russian-aligned affiliates",
+
+  iab_h: "Suspected IAB — Mora_001",
+  iab_badge: "hypothesis · unconfirmed",
+  iab_p: "The n046 campaign profile correlates strongly with <strong style=\"color:var(--ink);\">Mora_001</strong>, an actor documented by Forescout/Vedere Labs in March 2025 exploiting a pair of FortiOS authentication-bypass vulnerabilities (CVE-2024-55591, CVSS 9.6) to gain <code style=\"color:var(--acid);font-family:var(--pmono);\">super_admin</code> privileges on exposed FortiGate management interfaces — active exploitation since November/2024, 6 weeks before the first n046 batch.",
+  iab_table: "<tr><th>Factor</th><th>n046 campaign</th><th>Mora_001 (Forescout, Mar/2025)</th></tr><tr><td>Timing</td><td>Batch 1 on 12/21/2024</td><td>CVE-2024-55591 exploited as 0-day since Nov/2024</td></tr><tr><td>Victim profile</td><td>Mid-size LatAm/Iberian companies, multi-sector</td><td>Organizations with exposed FortiGate management interface</td></tr><tr><td>Attack pattern</td><td>6 companies across 5 countries in 40 min</td><td>Automated scripts testing multiple targets</td></tr><tr><td>LockBit connection</td><td>Confirmed LockBit 4.0 affiliate</td><td>TOX ID in SuperBlack ransom notes already linked to LockBit 3.0</td></tr>",
+  iab_iocs: "infrastructure (source: public Forescout report) — <code>ASN48282</code> (VDSINA, Moscow) · range <code>185.147.124.0/24</code> · VPN geolocated to Russia via <code>89.248.192.55</code> · post-exploitation usernames: <code>forticloud-tech</code>, <code>fortigate-firewall</code>, <code>adnimistrator</code> (intentional typo)",
+  iab_confidence: "<strong>[confidence assessment]</strong> strong hypothesis, supported by timing, victim profile, operational method, and ecosystem overlap — but not a confirmed attribution. Forescout has not published any direct connection between Mora_001 and the n046 code. Confirmation would require log analysis from n046 victims or legal process to Mora_001's hosting provider.",
+
+  next_eyebrow: "Continuation",
+  next_title: "More cases, as they're closed",
+  next_lede: "This drawer grows as new investigations are completed and cleared for publication.",
+  next_btn: "Back to Red Team →",
+
+  footer_tag: "case files · public data · responsible disclosure",
+};
+</script>
+<script src="i18n.js"></script>
 
 </body>
 </html>

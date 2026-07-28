@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMPEROR — Correlation Graph Engine // XenomorphSk</title>
+<meta name="description" content="EMPEROR — motor de correlação forense para atribuição de ameaças cibernéticas. Blockchain + infraestrutura + estilometria, num único grafo com pontuação bayesiana.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void: #07090a;
+  --panel: #0e1411;
+  --portal-1: #6dffb8;
+  --portal-2: #1fb6c9;
+  --acid: #d4ff3d;
+  --alert: #ff3b5c;
+  --ink: #cfe8da;
+  --ink-dim: #7c948a;
+  --line: #1d2b25;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+  --pmono: 'IBM Plex Mono', monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{ background:var(--void); color:var(--ink); font-family:var(--sans); overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+::selection{ background:var(--alert); color:#07090a; }
+a{ color:inherit; text-decoration:none; }
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-track{background:var(--void);}
+::-webkit-scrollbar-thumb{background:var(--line); border-radius:0;}
+
+.scanlines{ position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode:overlay; opacity:.5; }
+.vignette{ position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.62) 100%); }
+.redtone{ position:fixed; inset:0; pointer-events:none; z-index:1;
+  background: radial-gradient(ellipse at 85% 0%, rgba(255,59,92,.06), transparent 45%); }
+
+header{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:20px 6vw; font-family:var(--mono); font-size:12.5px; letter-spacing:.06em;
+  background:linear-gradient(to bottom, rgba(7,9,10,.92), rgba(7,9,10,0)); backdrop-filter:blur(2px);
+}
+.brand{ display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:700; }
+.brand .ring{ width:14px; height:14px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--alert), var(--portal-1), var(--acid), var(--alert));
+  animation:spin 4s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+nav{ display:flex; gap:26px; }
+nav a{ color:var(--ink-dim); position:relative; padding:4px 0; transition:color .2s; }
+nav a:hover{ color:var(--portal-1); }
+nav a.back::before{ content:'← '; }
+.hdr-right{ display:flex; align-items:center; gap:10px; }
+.jump-btn, .lang-btn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  background:transparent; border:1px solid var(--line); color:var(--ink-dim);
+  padding:8px 14px; cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:border-color .2s, color .2s;
+}
+.jump-btn:hover, .lang-btn:hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.jump-icon{ display:inline-block; transition:transform .3s ease; }
+.jump-btn:hover .jump-icon{ transform:rotate(90deg); }
+@media (max-width:760px){ nav{ display:none; } }
+@media (max-width:620px){ .jump-txt{ display:none; } .jump-btn{ padding:8px 11px; } }
+
+section{ position:relative; padding:120px 6vw 90px; max-width:1180px; margin:0 auto; z-index:10; }
+.eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--portal-1); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.eyebrow::before{ content:''; width:22px; height:1px; background:var(--portal-1); }
+.eyebrow.red{ color:var(--alert); }
+.eyebrow.red::before{ background:var(--alert); }
+h2.title{ font-family:var(--mono); font-weight:800; font-size:clamp(26px,3.8vw,42px);
+  letter-spacing:-.01em; color:var(--ink); margin-bottom:14px; text-transform:uppercase; }
+.lede{ color:var(--ink-dim); max-width:680px; font-size:15.5px; line-height:1.75; }
+
+#hero{ min-height:82vh; display:flex; flex-direction:column; justify-content:center; padding-top:150px; }
+.hero-tag{ font-family:var(--mono); font-size:12px; color:var(--ink-dim); letter-spacing:.12em; margin-bottom:22px; display:flex; align-items:center; gap:10px; }
+.hero-tag .blip{ color:var(--alert); animation:pulse 1.6s ease-in-out infinite; }
+@keyframes pulse{ 50%{ opacity:.3; } }
+h1.emperor-title{
+  font-family:var(--mono); font-weight:800; line-height:.95; font-size:clamp(52px,11vw,140px);
+  letter-spacing:-.01em; color:var(--alert); text-transform:uppercase;
+  text-shadow:0 0 24px rgba(255,59,92,.35), 3px 3px 0 #4a0f18;
+}
+.hero-quote{
+  font-family:var(--mono); font-size:clamp(14px,1.8vw,17px); color:var(--ink-dim); margin-top:18px;
+  font-style:normal;
+}
+.hero-quote .hl{ color:var(--portal-1); }
+.hero-sub{ margin-top:24px; max-width:660px; color:var(--ink-dim); font-size:16px; line-height:1.8; }
+.hero-row{ display:flex; flex-wrap:wrap; gap:14px; margin-top:38px; }
+.btn{ font-family:var(--mono); font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; padding:13px 22px;
+  border:1px solid var(--line); color:var(--ink); transition:all .2s ease; display:inline-flex; align-items:center; gap:8px; }
+.btn.primary{ background:var(--alert); color:#1a0206; border-color:var(--alert); font-weight:700; }
+.btn.primary:hover{ background:var(--acid); border-color:var(--acid); color:#1a1e02; transform:translateY(-1px); }
+.btn:not(.primary):hover{ border-color:var(--portal-1); color:var(--portal-1); }
+.hero-tags{ display:flex; gap:10px; flex-wrap:wrap; margin-top:36px; }
+.tag{ font-family:var(--pmono); font-size:11px; color:var(--ink-dim); border:1px solid var(--line); padding:6px 11px; letter-spacing:.03em; }
+
+.epistemic-banner{
+  margin-top:44px; border:1px solid rgba(255,59,92,.35); background:rgba(255,59,92,.04);
+  padding:20px 22px; font-family:var(--pmono); font-size:12.5px; color:var(--ink-dim); line-height:1.85; max-width:820px;
+}
+.epistemic-banner strong{ color:var(--alert); }
+
+.diff-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); margin-top:44px; border:1px solid var(--line); }
+@media (max-width:820px){ .diff-grid{ grid-template-columns:1fr; } }
+.diff-card{ background:var(--void); padding:26px; }
+.diff-card h4{ font-family:var(--mono); font-size:13px; color:var(--ink-dim); text-transform:uppercase; margin-bottom:10px; letter-spacing:.03em; }
+.diff-card p{ font-family:var(--pmono); font-size:12.5px; color:var(--ink-dim); line-height:1.75; }
+.diff-card.us{ background:#0c1310; }
+.diff-card.us h4{ color:var(--portal-1); }
+
+.math-box{
+  margin-top:40px; border:1px solid var(--line); background:var(--panel); padding:28px 30px;
+  font-family:var(--pmono); font-size:13px; color:var(--ink-dim); line-height:1.9; max-width:820px;
+}
+.math-box code{ color:var(--acid); }
+
+.gallery{ margin-top:50px; }
+.term-window{ border:1px solid var(--line); background:#0a0f0c; margin-bottom:26px; }
+.term-titlebar{
+  display:flex; align-items:center; gap:10px; padding:12px 18px; border-bottom:1px solid var(--line);
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim);
+}
+.term-titlebar .dots{ display:flex; gap:6px; }
+.term-titlebar .dots span{ width:9px; height:9px; border-radius:50%; }
+.term-titlebar .dots span:nth-child(1){ background:var(--alert); }
+.term-titlebar .dots span:nth-child(2){ background:var(--acid); }
+.term-titlebar .dots span:nth-child(3){ background:var(--portal-1); }
+.term-window img{ display:block; width:100%; height:auto; }
+.term-caption{ padding:14px 18px; font-family:var(--pmono); font-size:12px; color:var(--ink-dim); border-top:1px solid var(--line); }
+
+.tree-box{
+  margin-top:40px; border:1px solid var(--line); background:#0a0f0c; padding:24px 26px;
+  font-family:var(--pmono); font-size:12px; color:var(--ink-dim); line-height:1.7; overflow-x:auto; white-space:pre;
+}
+.tree-box .c{ color:var(--portal-1); }
+.tree-box .m{ color:var(--ink-dim); }
+
+.corr-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); margin-top:44px; border:1px solid var(--line); }
+@media (max-width:820px){ .corr-grid{ grid-template-columns:1fr; } }
+.corr-card{ background:var(--void); padding:28px; position:relative; overflow:hidden; }
+.corr-card::before{ content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--alert), var(--acid)); transform:scaleX(0); transform-origin:left; transition:transform .3s ease; }
+.corr-card:hover::before{ transform:scaleX(1); }
+.corr-card h3{ font-family:var(--mono); font-size:16px; color:var(--ink); text-transform:uppercase; letter-spacing:-.01em; margin-bottom:12px; }
+.corr-card p{ color:var(--ink-dim); font-size:13.5px; line-height:1.75; margin-bottom:12px; }
+.corr-result{
+  font-family:var(--pmono); font-size:11.5px; color:var(--portal-1); border-left:2px solid var(--portal-1);
+  padding-left:10px; line-height:1.8;
+}
+.corr-result.null{ color:var(--ink-dim); border-color:var(--ink-dim); }
+
+.roadmap{ margin-top:44px; display:flex; flex-direction:column; gap:2px; max-width:640px; }
+.rm-item{ display:flex; align-items:center; gap:12px; font-family:var(--pmono); font-size:13px; padding:8px 0; }
+.rm-item .box{ width:14px; height:14px; border:1px solid var(--ink-dim); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
+.rm-item.done .box{ background:var(--portal-1); border-color:var(--portal-1); color:#06160f; }
+.rm-item.done span.t{ color:var(--ink); }
+.rm-item:not(.done) span.t{ color:var(--ink-dim); }
+
+.install-box{
+  margin-top:44px; border:1px solid var(--line); background:#0a0f0c; padding:26px 28px;
+  font-family:var(--pmono); font-size:13px; color:var(--portal-1); line-height:2;
+}
+.install-box .cmt{ color:var(--ink-dim); }
+
+.donate-box{
+  margin-top:20px; border-left:2px solid var(--acid); background:rgba(212,255,61,.03); padding:16px 20px;
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); line-height:1.8; max-width:820px; word-break:break-all;
+}
+.donate-box .addr{ color:var(--acid); display:block; margin-top:8px; cursor:pointer; }
+
+#next{ text-align:center; padding-bottom:130px; }
+.contact-row{ display:flex; gap:16px; justify-content:center; margin-top:30px; flex-wrap:wrap; }
+
+footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justify-content:space-between;
+  font-family:var(--pmono); font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; gap:10px; }
+
+.reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+
+.pt-overlay{
+  position:fixed; inset:0; z-index:20000; background:var(--void);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .4s ease;
+}
+.pt-overlay.active{ opacity:1; pointer-events:all; }
+.pt-overlay[data-reveal-on-load]{ opacity:1; pointer-events:all; }
+.pt-inner{ text-align:center; width:min(80vw,480px); }
+.pt-eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.22em; color:var(--alert); margin-bottom:20px; text-transform:uppercase; }
+.pt-label{ font-family:var(--mono); font-weight:800; font-size:clamp(22px,4.6vw,42px); letter-spacing:-.01em; color:var(--ink); text-transform:uppercase; min-height:1.2em; }
+.pt-bar{ margin-top:28px; height:2px; width:100%; background:var(--line); position:relative; overflow:hidden; }
+.pt-fill{ position:absolute; left:0; top:0; height:100%; width:0%;
+  background:linear-gradient(90deg,var(--alert),var(--acid),var(--portal-1)); box-shadow:0 0 10px var(--alert); }
+.pt-pct{ margin-top:12px; font-family:var(--pmono); font-size:11px; color:var(--ink-dim); letter-spacing:.1em; }
+
+#portalCursor{
+  position:fixed; top:0; left:0; width:26px; height:26px; border-radius:50%;
+  border:1.5px solid var(--alert); box-shadow:0 0 12px rgba(255,59,92,.45);
+  pointer-events:none; z-index:19000; transform:translate(-50%,-50%);
+  transition:width .2s ease, height .2s ease, border-color .2s ease, opacity .2s ease;
+  mix-blend-mode:screen;
+}
+#portalCursor::before{
+  content:''; position:absolute; inset:4px; border-radius:50%;
+  background:conic-gradient(from 0deg, var(--alert), var(--acid), var(--portal-1), var(--alert));
+  opacity:.35; animation:spin 3s linear infinite;
+}
+#portalCursor.hovering{ width:40px; height:40px; border-color:var(--acid); }
+@media (hover:none), (pointer:coarse){ #portalCursor{ display:none; } }
+@media (prefers-reduced-motion: reduce){ #portalCursor{ display:none; } }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="redtone"></div>
+
+<div class="pt-overlay" id="ptOverlay" data-reveal-on-load="EMPEROR // Correlation Engine">
+  <div class="pt-inner">
+    <div class="pt-eyebrow">system://carregando dimensão</div>
+    <div class="pt-label" id="ptLabel">CARREGANDO</div>
+    <div class="pt-bar"><div class="pt-fill" id="ptFill"></div></div>
+    <div class="pt-pct" id="ptPct">00%</div>
+  </div>
+</div>
+
+<div id="portalCursor"></div>
+
+<header>
+  <div class="brand"><span class="ring"></span> XenomorphSk</div>
+  <nav>
+    <a class="back" href="index.html" data-transition="Voltando ao portal">portfolio</a>
+    <a href="#how">como funciona</a>
+    <a href="#correlators">correlators</a>
+    <a href="#install">instalar</a>
+  </nav>
+  <div class="hdr-right">
+    <button class="lang-btn" id="langBtn" title="mudar idioma">PT / EN</button>
+    <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
+      <span class="jump-icon">⤳</span><span class="jump-txt" data-i18n="jump">dimensão aleatória</span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<section id="hero">
+  <div class="hero-tag"><span class="blip">●</span> <span data-i18n="hero_tag">dimensão // ferramenta de código aberto</span></div>
+  <h1 class="emperor-title">EMPEROR</h1>
+  <p class="hero-quote">"The Emperor protects. <span class="hl">The Emperor correlates.</span>"</p>
+  <p class="hero-sub" data-i18n="hero_sub">
+    Motor de correlação forense para investigações de atribuição de ameaças — funde forense
+    de blockchain, correlação de infraestrutura e estilometria de código num único grafo de
+    correlação, com pontuação de confiança bayesiana.
+  </p>
+
+  <div class="hero-row">
+    <a class="btn primary" href="#install" data-i18n="btn_install">baixar e instalar →</a>
+    <a class="btn" href="https://github.com/XenomorphSk/EMPEROR" target="_blank" rel="noopener">github.com/XenomorphSk/EMPEROR</a>
+  </div>
+
+  <div class="hero-tags">
+    <span class="tag">Python</span>
+    <span class="tag">Bayesian scoring</span>
+    <span class="tag">SQLite</span>
+    <span class="tag">GraphML / DOT / HTML</span>
+    <span class="tag">MIT license</span>
+  </div>
+
+  <div class="epistemic-banner">
+    <strong data-i18n="epi_title">[!] limitação epistêmica — sempre documentada</strong>
+    <span data-i18n="epi_body">— uma pontuação alta é correlação circunstancial que justifica
+    investigação adicional. NUNCA é prova de identidade real. Trate como um sistema de
+    priorização de pistas, não como veredito.</span>
+  </div>
+</section>
+
+<section id="how" class="reveal">
+  <span class="eyebrow">Log_0001</span>
+  <h2 class="title" data-i18n="diff_title">Por que isso é diferente</h2>
+  <p class="lede" data-i18n="diff_lede">Ferramentas comerciais (Chainalysis Reactor, DomainTools Iris, Recorded Future) cobrem bem UMA camada de evidência cada. Nenhuma funde blockchain + infraestrutura + estilometria de código num único grafo com pontuação probabilística explícita.</p>
+
+  <div class="diff-grid">
+    <div class="diff-card">
+      <h4>Chainalysis Reactor</h4>
+      <p data-i18n="diff_1">Forense de blockchain — forte em heurísticas on-chain, mas não correlaciona com infraestrutura ou estilo de código.</p>
+    </div>
+    <div class="diff-card">
+      <h4>DomainTools Iris</h4>
+      <p data-i18n="diff_2">Correlação de infraestrutura — forte em WHOIS/DNS/certificados, mas isolado de evidência financeira ou de código.</p>
+    </div>
+    <div class="diff-card us">
+      <h4 data-i18n="diff_3_title">EMPEROR</h4>
+      <p data-i18n="diff_3">A camada de correlação que falta entre eles — funde as três camadas num grafo único, com peso probabilístico explícito por observação.</p>
+    </div>
+  </div>
+
+  <div class="math-box">
+    <span data-i18n="math_body">Cada observação carrega uma <strong style="color:var(--ink);">razão de verossimilhança (LR)</strong> —
+    o quão improvável é aquela coincidência ao acaso. Observações independentes entre o mesmo
+    par de entidades se combinam em espaço log-odds (soma de </span><code>log(LR)</code><span data-i18n="math_body2">),
+    com um <strong style="color:var(--ink);">prior conservador</strong> (1:1000 por padrão) pra evitar
+    superestimar atribuição a partir de evidência limitada. O resultado é uma probabilidade
+    posterior — nunca um "match" binário.</span>
+  </div>
+</section>
+
+<section id="screenshots" class="reveal">
+  <span class="eyebrow">Log_0002</span>
+  <h2 class="title" data-i18n="shell_title">O shell em ação</h2>
+  <p class="lede" data-i18n="shell_lede">CLI ASCII interativa — sem servidor, sem dependência de nuvem. Roda inteiramente na sua máquina.</p>
+
+  <div class="gallery">
+    <div class="term-window">
+      <div class="term-titlebar"><span class="dots"><span></span><span></span><span></span></span><span>emperor@psyker:~$ python3 cli/menu.py</span></div>
+      <img src="emperor-menu.png" alt="Menu principal do EMPEROR CLI">
+      <div class="term-caption" data-i18n="cap_menu">Menu principal — 14 operações, da ingestão de dados ao export do grafo.</div>
+    </div>
+    <div class="term-window">
+      <div class="term-titlebar"><span class="dots"><span></span><span></span><span></span></span><span>emperor@psyker:~$ [4] list entities</span></div>
+      <img src="emperor-entities.png" alt="Listagem de entidades no grafo">
+      <div class="term-caption" data-i18n="cap_entities">Entidades do dataset de demonstração — wallets, domínios, JARM, fingerprints de código, handles de fórum.</div>
+    </div>
+    <div class="term-window">
+      <div class="term-titlebar"><span class="dots"><span></span><span></span><span></span></span><span>emperor@psyker:~$ [6] attribution clusters</span></div>
+      <img src="emperor-clusters.png" alt="Clusters de atribuição gerados pelo grafo">
+      <div class="term-caption" data-i18n="cap_clusters">Clusters de atribuição acima de um limiar de confiança escolhido pelo analista.</div>
+    </div>
+  </div>
+</section>
+
+<section id="structure" class="reveal">
+  <span class="eyebrow">Log_0003</span>
+  <h2 class="title" data-i18n="struct_title">Estrutura do projeto</h2>
+  <div class="tree-box">emperor/
+├── core/
+│   ├── <span class="c">models.py</span>         <span class="m"># Entity, Observation, EvidenceTier</span>
+│   ├── <span class="c">graph_engine.py</span>   <span class="m"># motor de correlação bayesiana + clustering</span>
+│   ├── <span class="c">storage.py</span>        <span class="m"># persistência SQLite (case files)</span>
+│   └── <span class="c">graph_export.py</span>   <span class="m"># export GraphML / DOT / HTML interativo</span>
+├── correlators/
+│   ├── <span class="c">blockchain_correlator.py</span>    <span class="m"># CIOH, peeling chain, clustering temporal</span>
+│   ├── <span class="c">infra_correlator.py</span>         <span class="m"># Censys/Shodan (reuso de cert TLS, ASN)</span>
+│   ├── <span class="c">stylometry_models.py</span>        <span class="m"># tiers de robustez a ofuscação</span>
+│   └── <span class="c">stylometry_correlator.py</span>    <span class="m"># TF-IDF + similaridade de cosseno, explicável</span>
+├── data/
+│   ├── <span class="c">demo_dataset.py</span>       <span class="m"># dataset fictício estilo LockBit</span>
+│   └── <span class="c">lockbit_case_2026.py</span>  <span class="m"># caso real (dados de vazamento público)</span>
+├── cli/
+│   └── <span class="c">menu.py</span>           <span class="m"># shell ASCII interativo</span>
+└── tests/
+    └── <span class="c">test_engine_smoke.py</span></div>
+</section>
+
+<section id="correlators" class="reveal">
+  <span class="eyebrow">Log_0004</span>
+  <h2 class="title" data-i18n="corr_title">Correlators — o que cada um faz</h2>
+  <p class="lede" data-i18n="corr_lede">Cada módulo é testado contra o dataset real do vazamento do LockBit, não só dados sintéticos — incluindo os resultados nulos.</p>
+
+  <div class="corr-grid">
+    <div class="corr-card">
+      <h3>Blockchain Correlator</h3>
+      <p data-i18n="corr_1">100% offline sobre transações já coletadas. Heurísticas: CIOH (inputs co-gastos = mesma wallet, evidência FORTE), detecção de peeling chain, clustering temporal de saque (MODERADA).</p>
+    </div>
+    <div class="corr-card">
+      <h3>Infra Correlator</h3>
+      <p data-i18n="corr_2">Integração Censys/Shodan com suas próprias credenciais (nunca hardcoded). Detecta reuso de certificado TLS (FORTE) e reuso de ASN (peso reduzido automaticamente para provedores de nuvem grandes).</p>
+    </div>
+    <div class="corr-card">
+      <h3>Stylometry Correlator</h3>
+      <p data-i18n="corr_3">O verdadeiro diferencial de pesquisa. Cada categoria de feature tem um tier (frágil/moderado/robusto/assinatura) conforme sobrevive a packing/ofuscação — metadados de toolchain pesam ordens de magnitude mais que n-gramas de opcode de payload.</p>
+      <div class="corr-result" data-i18n="corr_3_result">demo do CLI: mesmo autor ~0.99 cosseno, autor diferente ~0.15–0.30</div>
+    </div>
+    <div class="corr-card">
+      <h3 data-i18n="corr_4_title">Campaign Correlator <span style="color:var(--ink-dim);font-weight:400;">(detecção de IAB)</span></h3>
+      <p data-i18n="corr_4">Detecta padrões de compra em lote de Initial Access Broker a partir de metadados de build de painel RaaS — motivado pelo caso real do "n046" (umarbishop47, 22+ vítimas latino-americanas). A correlação genuinamente nova é cross-afiliado.</p>
+      <div class="corr-result" data-i18n="corr_4_result">capado em tier MODERADO por design — corrobora evidência, não decide cluster sozinho</div>
+    </div>
+    <div class="corr-card">
+      <h3 data-i18n="corr_5_title">Geo Enrichment</h3>
+      <p data-i18n="corr_5">Substitui o palpite fraco por TLD por resolução DNS real + geolocalização IP offline (GeoLite2). Construído depois que testes contra o vazamento real do LockBit expuseram um modo de falha concreto do palpite por TLD.</p>
+      <div class="corr-result null" data-i18n="corr_5_result">resultado real: zero matches cross-afiliado no limiar 0.55 — resultado nulo honesto, não um falso positivo maquiado</div>
+    </div>
+    <div class="corr-card">
+      <h3 data-i18n="corr_6_title">Text Stylometry <span style="color:var(--ink-dim);font-weight:400;">(Burrows' Delta)</span></h3>
+      <p data-i18n="corr_6">Construído depois que similaridade de cosseno ingênua produziu um resultado degenerado (~1.000 pra qualquer par) em texto de chat real. Delta de Burrows (2002) usa z-scores em vez de cosseno bruto.</p>
+      <div class="corr-result" data-i18n="corr_6_result">resultado real: advid_70 ("Swan") e advid_54 ("affiliate900"), Delta ≈ 0.98 — pista genuína, exploratória, não confirmatória</div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" class="reveal">
+  <span class="eyebrow">Log_0005</span>
+  <h2 class="title" data-i18n="rm_title">Roadmap</h2>
+  <div class="roadmap">
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_1">Blockchain correlator</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_2">Infra correlator</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_3">Persistência SQLite</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_4">Stylometry correlator (fingerprint robusto a ofuscação)</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_5">Export de grafo (GraphML/DOT/HTML interativo)</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_6">Campaign correlator (detecção de IAB, matching cross-afiliado)</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_7">Geo enrichment (DNS + geolocalização IP offline)</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_8">Text stylometry correlator (Delta de Burrows)</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_9">Paper de estilometria robusta a ofuscação — estágio preprint</span></div>
+    <div class="rm-item done"><span class="box">✓</span><span class="t" data-i18n="rm_10">Primeiro estudo de calibração de LR empírico (N=11)</span></div>
+    <div class="rm-item"><span class="box"></span><span class="t" data-i18n="rm_11">Camada de API REST pra virar produto</span></div>
+    <div class="rm-item"><span class="box"></span><span class="t" data-i18n="rm_12">Montar corpus real de malware empacotado pra validar o paper</span></div>
+    <div class="rm-item"><span class="box"></span><span class="t" data-i18n="rm_13">Estudo de calibração com N maior</span></div>
+  </div>
+</section>
+
+<section id="install" class="reveal">
+  <span class="eyebrow">Log_0006</span>
+  <h2 class="title" data-i18n="install_title">Instalar e colaborar</h2>
+  <p class="lede" data-i18n="install_lede">MIT license — clona, roda local, manda PR. Toda ingestão de dados deve vir exclusivamente de fontes públicas (o campo source_notes existe pra preservar rastreabilidade — nunca remova ao adaptar pra dados reais).</p>
+
+  <div class="install-box">
+    <span class="cmt"># clona o repositório</span><br>
+    git clone https://github.com/XenomorphSk/EMPEROR.git<br>
+    cd EMPEROR<br><br>
+    <span class="cmt"># instala dependências</span><br>
+    pip install -r requirements.txt<br><br>
+    <span class="cmt"># roda o shell interativo</span><br>
+    python3 cli/menu.py
+  </div>
+
+  <p class="lede" style="margin-top:26px;" data-i18n="donate_lede">Se o EMPEROR for útil pra você, doações em Monero ajudam a financiar a continuidade (validação com corpus real, estudos de calibração maiores):</p>
+  <div class="donate-box">
+    <span data-i18n="donate_label">endereço Monero (XMR)</span>
+    <span class="addr" id="xmrAddr" title="clique para copiar">42tD2MoXvSSiEH4vZdRJon1oVvgsb1quRVw5xBXbAR9pZVkgc2LMfy9eGFNuqLhMLyZ2zUAEC5sAK8JeTxQGGmuMVCebKam</span>
+  </div>
+</section>
+
+<section id="next" class="reveal">
+  <span class="eyebrow">Continuação</span>
+  <h2 class="title" data-i18n="next_title">Mais uma dimensão no mapa</h2>
+  <p class="lede" style="margin:0 auto;" data-i18n="next_lede">EMPEROR nasceu do mesmo instinto que o Case Files HUNTING — inteligência de ameaças com disciplina metodológica. Contribuições, issues e PRs são bem-vindos.</p>
+  <div class="contact-row">
+    <a class="btn primary" href="https://github.com/XenomorphSk/EMPEROR" target="_blank" rel="noopener">GitHub →</a>
+    <a class="btn" href="casefile.html#hunting" data-transition="Abrindo case files">Ver Case Files — HUNTING →</a>
+    <a class="btn" href="index.html#projects" data-transition="Voltando ao portal">Voltar pro portfolio →</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© <span id="year"></span> Gabriel Skura Ribeiro — XenomorphSk</span>
+  <span>EMPEROR · MIT license · dados públicos apenas</span>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+document.getElementById('xmrAddr').addEventListener('click', function(){
+  navigator.clipboard.writeText(this.textContent.trim()).then(()=>{
+    const orig = this.textContent;
+    this.textContent = 'copiado_';
+    setTimeout(()=>{ this.textContent = orig; }, 1200);
+  }).catch(()=>{});
+});
+</script>
+
+<script>
+(function(){
+  const overlay = document.getElementById('ptOverlay');
+  if(!overlay) return;
+  const labelEl = document.getElementById('ptLabel');
+  const fillEl = document.getElementById('ptFill');
+  const pctEl = document.getElementById('ptPct');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const GLYPHS = '01#%&*_-+=<>/\\[]{}?ⰀⰁⰂⰃⰄⰅⰆⰇ';
+  function randChar(){ return GLYPHS[Math.floor(Math.random()*GLYPHS.length)]; }
+
+  function scramble(el, text, duration){
+    return new Promise(resolve=>{
+      if(reduced){ el.textContent = text; resolve(); return; }
+      const len = text.length;
+      const totalFrames = Math.max(6, Math.round(duration/30));
+      let frame = 0;
+      (function tick(){
+        let out = '';
+        for(let i=0;i<len;i++){
+          const revealFrame = (i/len)*totalFrames;
+          out += (frame >= revealFrame || text[i] === ' ') ? text[i] : randChar();
+        }
+        el.textContent = out;
+        frame++;
+        if(frame <= totalFrames){ setTimeout(tick, 30); }
+        else { el.textContent = text; resolve(); }
+      })();
+    });
+  }
+
+  function animateBar(duration){
+    return new Promise(resolve=>{
+      if(reduced){ fillEl.style.width='100%'; pctEl.textContent='100%'; resolve(); return; }
+      const start = performance.now();
+      (function step(now){
+        const p = Math.min(1,(now-start)/duration);
+        fillEl.style.width = (p*100).toFixed(0)+'%';
+        pctEl.textContent = String(Math.round(p*100)).padStart(2,'0')+'%';
+        if(p<1){ requestAnimationFrame(step); } else resolve();
+      })(performance.now());
+    });
+  }
+
+  async function playTransition(label, href){
+    overlay.classList.add('active');
+    fillEl.style.width='0%'; pctEl.textContent='00%';
+    await Promise.all([ scramble(labelEl, label, 550), animateBar(650) ]);
+    setTimeout(()=>{ window.location.href = href; }, reduced ? 0 : 120);
+  }
+
+  window.PortalTransition = { play: playTransition };
+
+  document.querySelectorAll('a[data-transition]').forEach(link=>{
+    link.addEventListener('click', function(e){
+      if(link.target === '_blank') return;
+      const href = link.getAttribute('href');
+      if(!href) return;
+      e.preventDefault();
+      playTransition(link.getAttribute('data-transition') || 'CARREGANDO', href);
+    });
+  });
+
+  const revealText = overlay.getAttribute('data-reveal-on-load');
+  if(revealText){
+    window.addEventListener('load', async ()=>{
+      await Promise.all([ scramble(labelEl, revealText, 500), animateBar(600) ]);
+      setTimeout(()=>{
+        overlay.removeAttribute('data-reveal-on-load');
+        overlay.classList.remove('active');
+      }, reduced ? 0 : 150);
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const cursor = document.getElementById('portalCursor');
+  if(!cursor) return;
+  if(window.matchMedia('(hover:none), (pointer:coarse)').matches) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  let cx = mx, cy = my;
+
+  window.addEventListener('mousemove', (e)=>{
+    mx = e.clientX; my = e.clientY;
+    cursor.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', ()=>{ cursor.style.opacity = '0'; });
+
+  document.addEventListener('mouseover', (e)=>{
+    if(e.target.closest('a, button, .diff-card, .corr-card, .term-window')){
+      cursor.classList.add('hovering');
+    }
+  });
+  document.addEventListener('mouseout', (e)=>{
+    if(e.target.closest('a, button, .diff-card, .corr-card, .term-window')){
+      cursor.classList.remove('hovering');
+    }
+  });
+
+  function loop(){
+    cx += (mx - cx) * 0.18;
+    cy += (my - cy) * 0.18;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+(function(){
+  const btn = document.getElementById('jumpBtn');
+  if(!btn) return;
+
+  const DIMENSIONS = [
+    { label:'AMR-NEQ / Many Worlds', file:'manyworlds.html', hash:'' },
+    { label:'CYTOS',                  file:'index.html',      hash:'#dim-cytos' },
+    { label:'D.A.N.T.E.',             file:'index.html',      hash:'#dim-dante' },
+    { label:'M.A.N.I.A.C.',           file:'index.html',      hash:'#dim-maniac' },
+    { label:'Sobre / Dossiê',         file:'index.html',      hash:'#about' },
+    { label:'Red Team & AppSec',      file:'index.html',      hash:'#security' },
+    { label:'Case Files — BUG',       file:'casefile.html',   hash:'#bug' },
+    { label:'Case Files — HUNTING',   file:'casefile.html',   hash:'#hunting' },
+    { label:'EMPEROR',                file:'emperor.html',    hash:'' },
+  ];
+
+  function currentFile(){
+    const p = window.location.pathname.split('/').pop();
+    return p === '' ? 'index.html' : p;
+  }
+
+  btn.addEventListener('click', ()=>{
+    const here = currentFile();
+    const hereHash = window.location.hash;
+    let pool = DIMENSIONS.filter(d => !(d.file === here && d.hash === hereHash));
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+
+    if(pick.file !== here){
+      if(window.PortalTransition){
+        window.PortalTransition.play('Saltando · ' + pick.label, pick.file + pick.hash);
+      } else {
+        window.location.href = pick.file + pick.hash;
+      }
+    } else {
+      window.location.hash = pick.hash;
+    }
+  });
+})();
+</script>
+
+<script>
+window.I18N_EN = {
+  jump: "random dimension",
+  hero_tag: "dimension // open-source tool",
+  hero_sub: "Forensic correlation engine for threat-attribution investigations — fuses blockchain forensics, infrastructure correlation, and code stylometry into a single correlation graph with Bayesian confidence scoring.",
+  btn_install: "download & install →",
+  epi_title: "[!] epistemic limitation — always documented",
+  epi_body: "— a high score is circumstantial correlation that justifies further investigation. It is NEVER proof of real-world identity. Treat it as a lead-prioritization system, not a verdict.",
+  diff_title: "Why this is different",
+  diff_lede: "Commercial tools (Chainalysis Reactor, DomainTools Iris, Recorded Future) each cover ONE evidence layer well. None of them fuse blockchain + infrastructure + code stylometry into a single graph with explicit probabilistic scoring.",
+  diff_1: "Blockchain forensics — strong on-chain heuristics, but doesn't correlate with infrastructure or code style.",
+  diff_2: "Infrastructure correlation — strong on WHOIS/DNS/certificates, but isolated from financial or code evidence.",
+  diff_3_title: "EMPEROR",
+  diff_3: "The correlation layer missing between them — fuses all three layers into a single graph, with explicit probabilistic weight per observation.",
+  math_body: "Each observation carries a <strong style=\"color:var(--ink);\">likelihood ratio (LR)</strong> — how unlikely that coincidence is by chance. Independent observations between the same pair of entities combine in log-odds space (sum of ",
+  math_body2: "), with a <strong style=\"color:var(--ink);\">conservative prior</strong> (1:1000 by default) to avoid overclaiming attribution from limited evidence. The result is a posterior probability — never a binary \"match\".",
+  shell_title: "The shell in action",
+  shell_lede: "Interactive ASCII CLI — no server, no cloud dependency. Runs entirely on your machine.",
+  cap_menu: "Main menu — 14 operations, from data ingestion to graph export.",
+  cap_entities: "Demo dataset entities — wallets, domains, JARM, code fingerprints, forum handles.",
+  cap_clusters: "Attribution clusters above a confidence threshold chosen by the analyst.",
+  struct_title: "Project structure",
+  corr_title: "Correlators — what each one does",
+  corr_lede: "Every module is tested against the real public LockBit leak dataset, not just synthetic data — including the null results.",
+  corr_1: "Fully offline over transactions you've already collected. Heuristics: CIOH (co-spent inputs = same wallet, STRONG evidence), peeling-chain detection, temporal cash-out clustering (MODERATE).",
+  corr_2: "Censys/Shodan integration using your own credentials (never hardcoded). Detects TLS certificate reuse (STRONG) and ASN reuse (weight automatically reduced for large cloud providers).",
+  corr_3: "The real research differentiator. Each feature category has a tier (fragile/moderate/robust/signature) based on how well it survives packing/obfuscation — toolchain metadata weighs orders of magnitude more than payload opcode n-grams.",
+  corr_3_result: "CLI demo: same author ~0.99 cosine, different author ~0.15–0.30",
+  corr_4_title: "Campaign Correlator <span style=\"color:var(--ink-dim);font-weight:400;\">(IAB detection)</span>",
+  corr_4: "Detects Initial Access Broker batch-purchase patterns from RaaS panel build metadata — motivated by the real \"n046\" case (umarbishop47, 22+ Latin American victims). The genuinely novel correlation is cross-affiliate.",
+  corr_4_result: "capped at MODERATE evidence tier by design — corroborates evidence, doesn't single-handedly drive a cluster",
+  corr_5_title: "Geo Enrichment",
+  corr_5: "Replaces the weak TLD-based guess with real DNS resolution + offline IP geolocation (GeoLite2). Built after testing against the real LockBit leak exposed a concrete failure mode of TLD guessing.",
+  corr_5_result: "real-world result: zero cross-affiliate matches at the 0.55 threshold — an honest null result, not a false positive dressed up as a finding",
+  corr_6_title: "Text Stylometry <span style=\"color:var(--ink-dim);font-weight:400;\">(Burrows' Delta)</span>",
+  corr_6: "Built after naive cosine similarity produced a degenerate result (~1.000 for every pair) on real chat text. Burrows' Delta (2002) uses z-scores instead of raw cosine.",
+  corr_6_result: "real-world result: advid_70 (\"Swan\") and advid_54 (\"affiliate900\"), Delta ≈ 0.98 — a genuine, exploratory lead, not confirmatory",
+  rm_title: "Roadmap",
+  rm_1: "Blockchain correlator",
+  rm_2: "Infra correlator",
+  rm_3: "SQLite persistence",
+  rm_4: "Stylometry correlator (obfuscation-robust fingerprinting)",
+  rm_5: "Graph export (GraphML/DOT/interactive HTML)",
+  rm_6: "Campaign correlator (IAB detection, cross-affiliate matching)",
+  rm_7: "Geo enrichment (DNS + offline IP geolocation)",
+  rm_8: "Text stylometry correlator (Burrows' Delta)",
+  rm_9: "Obfuscation-robust stylometry paper — preprint stage",
+  rm_10: "First empirical LR calibration study (N=11)",
+  rm_11: "REST API layer to turn this into a product",
+  rm_12: "Assemble a real packed-malware corpus to validate the paper",
+  rm_13: "Larger-N calibration study",
+  install_title: "Install & collaborate",
+  install_lede: "MIT license — clone it, run it locally, send a PR. All data ingestion must come exclusively from public sources (the source_notes field exists to preserve traceability — never remove it when adapting for real data).",
+  donate_lede: "If EMPEROR is useful to you, Monero donations help fund continued development (real-corpus validation, larger calibration studies):",
+  donate_label: "Monero (XMR) address",
+  next_title: "One more dimension on the map",
+  next_lede: "EMPEROR came from the same instinct as the Case Files HUNTING drawer — threat intelligence with methodological discipline. Contributions, issues, and PRs are welcome.",
+};
+</script>
+<script src="i18n.js"></script>
+
+</body>
+</html>
