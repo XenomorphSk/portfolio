@@ -611,6 +611,19 @@ footer{
       <a class="link" href="emperor.html" data-transition="Carregando EMPEROR">ver projeto completo →</a>
     </div>
 
+    <div class="dim-card" id="dim-scryer">
+      <div class="dim-id">DIM // SCRYER</div>
+      <h3>SCRYER</h3>
+      <div class="status"><span class="dot"></span> <span data-i18n="dim_scryer_status">código aberto · Black Bit</span></div>
+      <p data-i18n="dim_scryer_p">Mapeamento de superfície de ataque e correlação de CVEs sobre a API do Shodan — recon passivo, sem exploração ativa, com severidade real via NVD.</p>
+      <div class="stack"><span>Python</span><span>Shodan API</span><span>NVD/CVSS</span><span>CLI</span></div>
+      <div class="findings" data-i18n="dim_scryer_find">
+        "A eye that maps before the strike" — funde varredura de exposição e correlação de CVE
+        num único relatório, terminal/JSON/HTML, sem tocar no alvo.
+      </div>
+      <a class="link" href="scryer.html" data-transition="Carregando SCRYER">ver projeto completo →</a>
+    </div>
+
   </div>
 </section>
 
@@ -1266,6 +1279,7 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     { label:'Case Files — BUG',       file:'casefile.html',   hash:'#bug' },
     { label:'Case Files — HUNTING',   file:'casefile.html',   hash:'#hunting' },
     { label:'EMPEROR',                file:'emperor.html',    hash:'' },
+    { label:'SCRYER',                 file:'scryer.html',     hash:'' },
   ];
 
   function currentFile(){
@@ -1413,6 +1427,9 @@ window.I18N_EN = {
   dim_emperor_status: "open source · MIT license",
   dim_emperor_p: "Forensic correlation engine for threat attribution — fuses blockchain, infrastructure, and code stylometry into a single graph with Bayesian scoring.",
   dim_emperor_find: "Campaign correlator detected the \"n046\" batch-purchase pattern · honest null result on geo enrichment · Burrows' Delta found a stylistically near-identical pair in real negotiation chat.",
+  dim_scryer_status: "open source · Black Bit",
+  dim_scryer_p: "Attack surface mapping and CVE correlation on top of the Shodan API — passive recon, no active exploitation, real severity via NVD.",
+  dim_scryer_find: "\"The eye that maps before the strike\" — fuses exposure scanning and CVE correlation into a single report, terminal/JSON/HTML, without touching the target.",
 
   sec_title: "Red Team & AppSec",
   sec_lede: "Where it all started: finding the flaw the system didn't know it had. Specialized in authentication flaws, access control breaks, and corporate API misconfigurations.",
