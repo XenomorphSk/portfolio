@@ -167,6 +167,33 @@ input[type=range]::-moz-range-thumb{
 .interp-col h4{ font-family:var(--mono); font-size:13px; color:var(--portal-1); text-transform:uppercase; letter-spacing:.06em; margin-bottom:14px; }
 .interp-col p{ color:var(--ink-dim); font-size:14.5px; line-height:1.8; margin-bottom:14px; }
 
+/* no-go theorem */
+.nogo-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); margin-top:44px; border:1px solid var(--line); }
+@media (max-width:820px){ .nogo-grid{ grid-template-columns:1fr; } }
+.nogo-card{ background:var(--void); padding:28px; }
+.nogo-card .n{ font-family:var(--mono); font-size:11px; color:var(--portal-1); letter-spacing:.1em; margin-bottom:12px; }
+.nogo-card h3{ font-family:var(--mono); font-size:15px; color:var(--ink); text-transform:uppercase; margin-bottom:10px; letter-spacing:-.01em; }
+.nogo-card p{ color:var(--ink-dim); font-size:13.5px; line-height:1.75; }
+.nogo-card strong{ color:var(--ink); }
+.nogo-card em{ color:var(--acid); font-style:normal; }
+
+.nogo-verify{ margin-top:40px; border:1px solid var(--line); background:var(--panel); padding:26px 28px; }
+.nv-label{ font-family:var(--mono); font-size:12px; color:var(--portal-1); text-transform:uppercase; letter-spacing:.08em; margin-bottom:18px; }
+.nv-table{ display:flex; flex-direction:column; border:1px solid var(--line); }
+.nv-row{ display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; padding:11px 16px; border-bottom:1px solid var(--line); font-family:var(--pmono); font-size:12.5px; color:var(--ink-dim); }
+.nv-row:last-child{ border-bottom:none; }
+.nv-row.head{ color:var(--ink); font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; }
+.nv-note{ margin-top:18px; color:var(--ink-dim); font-size:12.5px; line-height:1.8; font-family:var(--pmono); }
+
+.hyp-status{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); margin-top:24px; border:1px solid var(--line); }
+@media (max-width:820px){ .hyp-status{ grid-template-columns:1fr; } }
+.hyp-item{ background:var(--void); padding:22px 24px; }
+.hyp-tag{ font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border:1px solid currentColor; display:inline-block; margin-bottom:12px; }
+.hyp-item.refuted .hyp-tag{ color:var(--alert); }
+.hyp-item.open .hyp-tag{ color:var(--acid); }
+.hyp-item p{ color:var(--ink-dim); font-size:13px; line-height:1.75; }
+.hyp-item strong{ color:var(--ink); }
+
 /* quote */
 #quote{ text-align:center; padding:110px 6vw; }
 #quote blockquote{ font-family:var(--mono); font-size:clamp(18px,2.6vw,28px); color:var(--ink); max-width:760px; margin:0 auto;
@@ -236,6 +263,7 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
     <a class="back" href="index.html" data-transition="Voltando ao portal" data-i18n="nav_back">portfolio</a>
     <a href="#simulator" data-i18n="nav_sim">simulador</a>
     <a href="#results" data-i18n="nav_results">resultados</a>
+    <a href="#nogo" data-i18n="nav_nogo">no-go</a>
   </nav>
   <button class="lang-btn" id="langBtn" title="mudar idioma">PT ⇄ EN</button>
   <button class="jump-btn" id="jumpBtn" title="pular para uma dimensão aleatória">
@@ -247,24 +275,27 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 
 <!-- HERO -->
 <section id="hero">
-  <span class="hero-eyebrow"><span class="blip">●</span> dimensão // AMR-NEQ + ITFROMBIT + MANYWORLDS</span>
+  <span class="hero-eyebrow"><span class="blip">●</span> dimensão // AMR-NEQ + ITFROMBIT + MANYWORLDS · v2</span>
   <h1>It From Bit /<br><span class="hl">Many Worlds</span></h1>
   <p class="hero-sub" data-i18n="hero_sub">
     Uma pergunta simples testada em hardware quântico real: quando dois sistemas guardam
     informação de forma <em>holográfica</em> — redundante, espalhada, à prova de perda parcial —
     eles resistem melhor ao ruído do que uma codificação genérica? A resposta experimental,
-    medida em processadores supercondutores da IBM, é sim.
+    medida em processadores supercondutores da IBM, é sim. A versão 2 vai além: testa se essa
+    estrutura sobrevive a eventos de medição e a ordem causal indefinida — e prova, com teorema
+    formal, por que isso <em>não</em> abre um canal de sinal entre ramos de Everett.
   </p>
   <div class="hero-tags">
     <span class="tag">IBM Quantum · Heron r2</span>
     <span class="tag" data-i18n="tag_holo">códigos holográficos</span>
     <span class="tag" data-i18n="tag_prereg">pré-registrado</span>
     <span class="tag" data-i18n="tag_real">hardware real, não só simulação</span>
+    <span class="tag" data-i18n="tag_nogo">teorema no-go provado</span>
   </div>
 
   <div class="disclosure" data-i18n="disclosure">
     <strong>[!] nota de disclosure</strong> — esta página resume a pergunta, o protocolo em alto
-    nível e os resultados já destinados a publicação (preprint no Zenodo, artigo em preparação
+    nível e os resultados já destinados a publicação (preprint v2 no Zenodo, artigo em preparação
     para arXiv). Detalhes de implementação — construção exata do encoder, arquitetura do
     ansatz variacional e função de custo — ficam de fora de propósito. Não é sobre esconder o
     resultado; é sobre não distribuir o método antes da hora certa.
@@ -352,52 +383,141 @@ footer{ border-top:1px solid var(--line); padding:26px 6vw; display:flex; justif
 <section id="results" class="reveal">
   <span class="eyebrow" data-i18n="res_eyebrow">Confirmado em hardware</span>
   <h2 class="title" data-i18n="res_title">O resultado central</h2>
-  <p class="lede" data-i18n="res_lede">Três validações independentes, três hardwares reais da IBM Quantum.</p>
+  <p class="lede" data-i18n="res_lede">Seis validações independentes — da vantagem básica de canal até ordem causal indefinida.</p>
 
   <div class="res-table">
     <div class="res-row head"><span data-i18n="res_h1">Experimento</span><span data-i18n="res_h2">Resultado</span><span>p-valor</span></div>
     <div class="res-row"><span class="v" data-i18n="res_r1">Handshake nativo — ibm_kingston (3 níveis)</span><span class="v" data-i18n="res_r1v">Δ médio +0.47</span><span class="p">0.0265</span></div>
     <div class="res-row"><span class="v" data-i18n="res_r2">Curva de capacidade — ibm_fez (9 níveis)</span><span class="v">8.3× amplitude</span><span class="p">≈0</span></div>
     <div class="res-row"><span class="v" data-i18n="res_r3">Ruído em todos os qubits — ibm_fez</span><span class="v">7.6× amplitude</span><span class="p">≈0</span></div>
+    <div class="res-row"><span class="v" data-i18n="res_r4">Correlação condicional entre ramos (pós-medição)</span><span class="v" data-i18n="res_r4v">até 834× razão</span><span class="p">0.004</span></div>
+    <div class="res-row"><span class="v" data-i18n="res_r5">CHSH no par de Bell lógico</span><span class="v" data-i18n="res_r5v">2√2 exato (limite de Tsirelson)</span><span class="p">0.004</span></div>
+    <div class="res-row"><span class="v" data-i18n="res_r6">Quantum Switch + codificação holográfica</span><span class="v" data-i18n="res_r6v">9–20× coerência</span><span class="p">0.047</span></div>
   </div>
 
   <div class="interp">
     <div class="interp-col">
       <h4 data-i18n="interp1_h">O que já sabemos</h4>
       <p data-i18n="interp1_p1">A estrutura holográfica protege correlações lógicas em hardware supercondutor real —
-      não só em simulação. O efeito é consistente em três backends diferentes e cresce com o
-      ruído, não decai com ele.</p>
-      <p data-i18n="interp1_p2">Isso é evidência de código de correção de erros funcionando como esperado pela
-      teoria — o que já é, sozinho, um resultado experimental interessante para um pesquisador
-      sem afiliação institucional rodando num plano gratuito de QPU.</p>
+      não só em simulação. O efeito é consistente em três backends diferentes, cresce com o
+      ruído em vez de decair, e sobrevive a eventos de medição (o análogo experimental de uma
+      "ramificação" de Everett).</p>
+      <p data-i18n="interp1_p2">O canal atinge exatamente o limite de Tsirelson (CHSH = 2√2) — confirmando mecânica
+      quântica padrão — e, num regime de ordem causal indefinida (Quantum Switch), a
+      codificação holográfica mede uma coerência 9–20× maior que um encoder aleatório. Nenhum
+      desses resultados quebra a física estabelecida; eles mostram que o [[5,1,3]] é o canal
+      ótimo dentro dela.</p>
     </div>
     <div class="interp-col">
-      <h4 data-i18n="interp2_h">O que continua em aberto</h4>
-      <p data-i18n="interp2_p1">Se essa proteção é "apenas" correção de erro padrão, ou se existe uma assinatura mais
-      profunda — algo que se pareça com um canal de informação entre os dois sistemas, além
-      da simples preservação de um bit local — é a pergunta que define o próximo experimento.</p>
-      <p data-i18n="interp2_p2">Esse próximo passo exige múltiplos qubits lógicos e um protocolo de modulação: um
-      lado "escreve", o outro "lê" sem canal clássico adicional. Ainda não foi testado.</p>
+      <h4 data-i18n="interp2_h">O que virou teorema (e o que segue aberto)</h4>
+      <p data-i18n="interp2_p1">A pergunta antiga — "isso é só correção de erro padrão, ou existe algo mais parecido
+      com um canal entre os dois sistemas?" — motivou a versão forte da hipótese (H_BRIDGE):
+      um observador dentro de um ramo decoerido conseguiria detectar uma escolha feita no
+      outro ramo? A v2 prova formalmente que <strong>não</strong> — e não por limitação de hardware,
+      mas como consequência direta da preservação de traço de operações CPTP.</p>
+      <p data-i18n="interp2_p2">A versão fraca (H_IB) — uma correspondência puramente formal entre ordens causais e
+      ramos de Everett, sem exigir um canal operacional — não é tocada pela prova e continua
+      em aberto como pergunta matemática sobre a estrutura do formalismo da Process Matrix.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NO-GO THEOREM -->
+<section id="nogo" class="reveal">
+  <span class="eyebrow" data-i18n="nogo_eyebrow">Novo na v2</span>
+  <h2 class="title" data-i18n="nogo_title">O teorema no-go: por que não existe um "ping" entre ramos</h2>
+  <p class="lede" data-i18n="nogo_lede">
+    O resultado mais forte desta versão não é experimental — é uma prova formal, verificada
+    numericamente contra mais de 25.000 configurações adversariais.
+  </p>
+
+  <div class="nogo-grid">
+    <div class="nogo-card">
+      <div class="n">01</div>
+      <h3 data-i18n="nogo1_h">As três condições pra um "ping"</h3>
+      <p data-i18n="nogo1_p">Pra um observador num ramo detectar uma escolha feita em outro ramo, seriam necessárias
+      três coisas ao mesmo tempo: <strong>localidade</strong> (nenhum acoplamento residual entre os
+      ramos), <strong>decoerência genuína</strong> (os ramos já se separaram de verdade, não é uma
+      superposição esperando colapsar) e um <strong>sinal detectável</strong> que dependa da escolha
+      feita do outro lado.</p>
+    </div>
+    <div class="nogo-card">
+      <div class="n">02</div>
+      <h3 data-i18n="nogo2_h">Lema 1 — no-signaling, forma operacional</h3>
+      <p data-i18n="nogo2_p">Pra qualquer estado bipartido e qualquer operação física local do lado B (unitária,
+      medição, acoplamento com ancilla — qualquer coisa que preserve traço), o estado
+      marginal do lado A não muda. Isso vale pra <em>qualquer</em> estrutura interna, holográfica
+      ou não — é consequência direta de como operações físicas preservam probabilidade.</p>
+    </div>
+    <div class="nogo-card">
+      <div class="n">03</div>
+      <h3 data-i18n="nogo3_h">Teorema 1 — o "ping" é vazio</h3>
+      <p data-i18n="nogo3_p">Combinando localidade com o Lema 1: nenhuma observável local tem valor esperado que
+      dependa da escolha feita no outro ramo. As três condições nunca se satisfazem ao mesmo
+      tempo — se a localidade vale, o sinal desaparece; se o sinal aparece (como no Quantum
+      Switch), é porque a localidade nunca valeu pra começo de conversa.</p>
+    </div>
+    <div class="nogo-card">
+      <div class="n">04</div>
+      <h3 data-i18n="nogo4_h">Por que o Quantum Switch não é uma exceção</h3>
+      <p data-i18n="nogo4_p">A coerência medida no qubit de controle do Quantum Switch é real — mas quem mede esse
+      qubit não está "dentro" de um único ramo decoerido: ocupa uma posição causal que
+      abrange as duas ordens ao mesmo tempo, por construção do próprio protocolo. É
+      exatamente aí que a condição de decoerência genuína falha.</p>
+    </div>
+  </div>
+
+  <div class="nogo-verify">
+    <div class="nv-label" data-i18n="nogo_verify_label">Verificação numérica adversarial</div>
+    <div class="nv-table">
+      <div class="nv-row head"><span data-i18n="nogo_v_h1">Busca</span><span data-i18n="nogo_v_h2">Configurações testadas</span><span data-i18n="nogo_v_h3">Violação máxima encontrada</span></div>
+      <div class="nv-row"><span data-i18n="nogo_v1">Fuzzing aleatório (estados de Haar)</span><span>20.000</span><span>~10⁻¹⁶</span></div>
+      <div class="nv-row"><span data-i18n="nogo_v2">Fuzzing com estrutura holográfica</span><span>5.000</span><span>~10⁻¹⁶</span></div>
+      <div class="nv-row"><span data-i18n="nogo_v3">Busca adversarial (otimizador, 25 reinícios)</span><span>—</span><span>~10⁻¹⁶</span></div>
+    </div>
+    <p class="nv-note" data-i18n="nogo_v_note">Toda violação encontrada é consistente com ruído de ponto flutuante (precisão de
+    máquina), não sinal físico. Como controle positivo, o mesmo código aplicado ao qubit de
+    controle do Quantum Switch — fora da álgebra local de qualquer ramo único — detecta
+    corretamente uma diferença de 2.0000, confirmando que a ausência de sinal nos outros
+    testes é ausência real, não falha do método.</p>
+  </div>
+
+  <div class="hyp-status">
+    <div class="hyp-item refuted">
+      <span class="hyp-tag" data-i18n="hyp_bridge_tag">H_BRIDGE — refutada</span>
+      <p data-i18n="hyp_bridge_p">Versão forte e operacional: um observador num ramo poderia detectar uma escolha no
+      outro? <strong>Não</strong> — provado formalmente, independente de estrutura holográfica.</p>
+    </div>
+    <div class="hyp-item open">
+      <span class="hyp-tag" data-i18n="hyp_ib_tag">H_IB — em aberto</span>
+      <p data-i18n="hyp_ib_p">Versão fraca e puramente formal: existe uma correspondência matemática entre ordens
+      causais e ramos de Everett? Não tocada pela prova — segue como pergunta aberta sobre o
+      formalismo da Process Matrix.</p>
     </div>
   </div>
 </section>
 
 <!-- QUOTE -->
 <section id="quote" class="reveal">
-  <blockquote data-i18n="quote_text">"A antena funciona. O que ela pode receber ainda é desconhecido."</blockquote>
-  <cite data-i18n="quote_cite">— conclusão de trabalho, MANYWORLDS v1</cite>
+  <blockquote data-i18n="quote_text">"A antena funciona, e a largura de banda dela é real. O que ela não pode fazer —
+  carregar um sinal através da linha que separa um ramo do outro — agora está provado,
+  não apenas não observado."</blockquote>
+  <cite data-i18n="quote_cite">— conclusão de trabalho, MANYWORLDS v2</cite>
 </section>
 
 <!-- NEXT -->
 <section id="next" class="reveal">
   <span class="eyebrow" data-i18n="next_eyebrow">Continuação</span>
-  <h2 class="title" data-i18n="next_title">Preprint e próximos passos</h2>
+  <h2 class="title" data-i18n="next_title">Paper e próximos passos</h2>
   <p class="lede" style="margin:0 auto;" data-i18n="next_lede">
-    O preprint que originou este projeto (ITFROMBIT) já está publicado. O artigo do MANYWORLDS
-    está em preparação para o arXiv.
+    O paper completo do MANYWORLDS v2 — com o teorema no-go — já está publicado no Zenodo.
+    O preprint que originou o projeto (ITFROMBIT) também está disponível. Artigo em preparação
+    para o arXiv.
   </p>
   <div class="contact-row">
-    <a class="btn primary" href="https://zenodo.org/records/21431103" target="_blank" rel="noopener">Preprint ITFROMBIT (Zenodo) →</a>
+    <a class="btn primary" href="https://zenodo.org/records/21431103" target="_blank" rel="noopener">MANYWORLDS v2 (Zenodo) →</a>
+    <a class="btn" href="https://doi.org/10.5281/zenodo.21068699" target="_blank" rel="noopener">Preprint ITFROMBIT (Zenodo) →</a>
+    <a class="btn" href="https://orcid.org/0009-0003-5070-5260" target="_blank" rel="noopener">ORCID →</a>
     <a class="btn" href="index.html#projects" data-transition="Voltando ao portal" data-i18n="next_back">Voltar às dimensões</a>
   </div>
 </section>
@@ -741,13 +861,15 @@ window.I18N_EN = {
   nav_back: "portfolio",
   nav_sim: "simulator",
   nav_results: "results",
+  nav_nogo: "no-go",
   jump: "random dimension",
 
-  hero_sub: "A simple question tested on real quantum hardware: when two systems store information <em>holographically</em> — redundant, spread out, resistant to partial loss — do they resist noise better than a generic encoding? The experimental answer, measured on IBM superconducting processors, is yes.",
+  hero_sub: "A simple question tested on real quantum hardware: when two systems store information <em>holographically</em> — redundant, spread out, resistant to partial loss — do they resist noise better than a generic encoding? The experimental answer, measured on IBM superconducting processors, is yes. Version 2 goes further: it tests whether that structure survives measurement events and indefinite causal order — and proves, with a formal theorem, why that does <em>not</em> open a signaling channel between Everett branches.",
   tag_holo: "holographic codes",
   tag_prereg: "pre-registered",
   tag_real: "real hardware, not just simulation",
-  disclosure: "<strong>[!] disclosure note</strong> — this page summarizes the question, the high-level protocol, and the results already destined for publication (Zenodo preprint, arXiv article in preparation). Implementation details — the exact encoder construction, the variational ansatz architecture, and the cost function — are left out on purpose. It's not about hiding the result; it's about not distributing the method before the right time.",
+  tag_nogo: "no-go theorem proved",
+  disclosure: "<strong>[!] disclosure note</strong> — this page summarizes the question, the high-level protocol, and the results already destined for publication (Zenodo v2 preprint, arXiv article in preparation). Implementation details — the exact encoder construction, the variational ansatz architecture, and the cost function — are left out on purpose. It's not about hiding the result; it's about not distributing the method before the right time.",
 
   exp_eyebrow: "The experiment, in 3 steps",
   exp_title: "What was tested",
@@ -774,25 +896,51 @@ window.I18N_EN = {
 
   res_eyebrow: "Confirmed on hardware",
   res_title: "The central result",
-  res_lede: "Three independent validations, three real IBM Quantum hardware backends.",
+  res_lede: "Six independent validations — from basic channel advantage to indefinite causal order.",
   res_h1: "Experiment", res_h2: "Result",
   res_r1: "Native handshake — ibm_kingston (3 levels)", res_r1v: "mean Δ +0.47",
   res_r2: "Capacity curve — ibm_fez (9 levels)",
   res_r3: "Noise across all qubits — ibm_fez",
+  res_r4: "Inter-branch conditional correlation (post-measurement)", res_r4v: "up to 834× ratio",
+  res_r5: "CHSH on the logical Bell pair", res_r5v: "2√2 exact (Tsirelson bound)",
+  res_r6: "Quantum Switch + holographic encoding", res_r6v: "9–20× coherence",
 
   interp1_h: "What we already know",
-  interp1_p1: "Holographic structure protects logical correlations on real superconducting hardware — not just in simulation. The effect is consistent across three different backends and grows with noise, rather than decaying.",
-  interp1_p2: "This is evidence of an error-correcting code working as theory predicts — which is, on its own, an interesting experimental result for a researcher with no institutional affiliation running on a free QPU plan.",
-  interp2_h: "What remains open",
-  interp2_p1: "Whether this protection is \"just\" standard error correction, or whether there's a deeper signature — something resembling an information channel between the two systems, beyond simple preservation of a local bit — is the question that defines the next experiment.",
-  interp2_p2: "That next step requires multiple logical qubits and a modulation protocol: one side \"writes\", the other \"reads\" with no additional classical channel. Not tested yet.",
+  interp1_p1: "Holographic structure protects logical correlations on real superconducting hardware — not just in simulation. The effect is consistent across three different backends, grows with noise rather than decaying, and survives measurement events (the experimental analog of an Everett \"branching\").",
+  interp1_p2: "The channel hits exactly the Tsirelson bound (CHSH = 2√2) — confirming standard quantum mechanics — and in a regime of indefinite causal order (Quantum Switch), holographic encoding measures 9–20× more coherence than a random encoder. None of this breaks established physics; it shows [[5,1,3]] is the optimal channel within it.",
+  interp2_h: "What became a theorem (and what stays open)",
+  interp2_p1: "The old question — \"is this just standard error correction, or is there something more resembling a channel between the two systems?\" — motivated the strong version of the hypothesis (H_BRIDGE): could an observer inside one decohered branch detect a choice made in the other? Version 2 formally proves <strong>no</strong> — not because of hardware limitations, but as a direct consequence of trace preservation in CPTP operations.",
+  interp2_p2: "The weak version (H_IB) — a purely formal correspondence between causal orders and Everett branches, with no operational channel required — is untouched by the proof and remains open as a mathematical question about the structure of the Process Matrix formalism.",
 
-  quote_text: "\"The antenna works. What it can receive is still unknown.\"",
-  quote_cite: "— working conclusion, MANYWORLDS v1",
+  nogo_eyebrow: "New in v2",
+  nogo_title: "The no-go theorem: why there's no \"ping\" between branches",
+  nogo_lede: "The strongest result in this version isn't experimental — it's a formal proof, numerically verified against more than 25,000 adversarial configurations.",
+  nogo1_h: "The three conditions for a \"ping\"",
+  nogo1_p: "For an observer in one branch to detect a choice made in another, three things would need to hold at once: <strong>locality</strong> (no residual coupling between branches), <strong>genuine decoherence</strong> (the branches have truly separated, not a superposition waiting to collapse), and a <strong>detectable signal</strong> that depends on the choice made on the other side.",
+  nogo2_h: "Lemma 1 — no-signaling, operational form",
+  nogo2_p: "For any bipartite state and any physically realizable local operation on side B (unitary, measurement, ancilla coupling — anything trace-preserving), the marginal state on side A does not change. This holds for <em>any</em> internal structure, holographic or not — it's a direct consequence of how physical operations preserve probability.",
+  nogo3_h: "Theorem 1 — the \"ping\" is empty",
+  nogo3_p: "Combining locality with Lemma 1: no local observable has an expectation value that depends on the choice made in the other branch. The three conditions never hold simultaneously — if locality holds, the signal vanishes; if a signal appears (as in the Quantum Switch), it's because locality never held to begin with.",
+  nogo4_h: "Why the Quantum Switch isn't an exception",
+  nogo4_p: "The coherence measured on the Quantum Switch's control qubit is real — but whoever measures that qubit isn't \"inside\" a single decohered branch: by construction of the protocol itself, they occupy a causal position spanning both orders at once. That's exactly where the genuine-decoherence condition fails.",
+  nogo_verify_label: "Adversarial numerical verification",
+  nogo_v_h1: "Search", nogo_v_h2: "Configurations tested", nogo_v_h3: "Max. violation found",
+  nogo_v1: "Random fuzzing (Haar states)",
+  nogo_v2: "Holographic-structured fuzzing",
+  nogo_v3: "Adversarial search (optimizer, 25 restarts)",
+  nogo_v_note: "Every violation found is consistent with floating-point noise (machine precision), not physical signal. As a positive control, the same code applied to the Quantum Switch's control qubit — outside the local algebra of any single branch — correctly detects a difference of 2.0000, confirming the absence of signal in the other tests is a real absence, not a method failure.",
+
+  hyp_bridge_tag: "H_BRIDGE — refuted",
+  hyp_bridge_p: "Strong, operational version: could an observer in one branch detect a choice made in the other? <strong>No</strong> — formally proven, independent of holographic structure.",
+  hyp_ib_tag: "H_IB — open",
+  hyp_ib_p: "Weak, purely formal version: is there a mathematical correspondence between causal orders and Everett branches? Untouched by the proof — remains an open question about the Process Matrix formalism.",
+
+  quote_text: "\"The antenna works, and its bandwidth is real. What it cannot do — carry a signal across the line that separates one branch from another — is now proven, not merely unobserved.\"",
+  quote_cite: "— working conclusion, MANYWORLDS v2",
 
   next_eyebrow: "Continuation",
-  next_title: "Preprint and next steps",
-  next_lede: "The preprint that originated this project (ITFROMBIT) is already published. The MANYWORLDS article is in preparation for arXiv.",
+  next_title: "Paper and next steps",
+  next_lede: "The full MANYWORLDS v2 paper — with the no-go theorem — is already published on Zenodo. The preprint that originated the project (ITFROMBIT) is also available. Article in preparation for arXiv.",
   next_back: "Back to the dimensions",
 };
 </script>
